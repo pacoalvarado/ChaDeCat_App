@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.alvarado.chadecat_app">
 
     <application
@@ -9,11 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChaDeCat_App">
-        <activity
-            android:name=".Perfil2Activity"
-            android:exported="false"
-            android:label="@string/title_activity_perfil2"
-            android:theme="@style/Theme.ChaDeCat_App.NoActionBar" />
+
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
@@ -24,11 +21,13 @@
 
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.ChaDeCat_App.NoActionBar"
             android:exported="false" />
 
         <activity
             android:name=".HomeActivity"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="MissingClass">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
