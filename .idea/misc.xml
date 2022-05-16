@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Paco Alvarado/AndroidStudioProjects/ChaDeCat_App/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
-        <entry key="..\:/Users/Paco Alvarado/AndroidStudioProjects/ChaDeCat_App/app/src/main/res/layout/login.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/gmoli/AndroidStudioProjects/ChaDeCat_App/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.1890625" />
+        <entry key="..\:/Users/gmoli/AndroidStudioProjects/ChaDeCat_App/app/src/main/res/layout-w936dp/activity_login.xml" value="0.190625" />
+        <entry key="..\:/Users/gmoli/AndroidStudioProjects/ChaDeCat_App/app/src/main/res/layout/activity_login.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/gmoli/AndroidStudioProjects/ChaDeCat_App/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/gmoli/AndroidStudioProjects/ChaDeCat_App/app/src/main/res/layout/login.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>
