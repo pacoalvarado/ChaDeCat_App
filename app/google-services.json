@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "404512134792",
+    "firebase_url": "https://chadecat-app-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "chadecat-app",
+    "storage_bucket": "chadecat-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404512134792:android:6249d21b19bf46491e313d",
+        "android_client_info": {
+          "package_name": "com.alvarado.chadecat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404512134792-9ve7vlpjg6lvpkhj8jaeej3inuuul535.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-JvjqarK-P2zwOlBII3VxhCpF7MIdFRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404512134792-9ve7vlpjg6lvpkhj8jaeej3inuuul535.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
