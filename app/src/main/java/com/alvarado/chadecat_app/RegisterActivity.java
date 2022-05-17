@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, "User Create", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
 
-                            AddUser("1", name, email);
+                            AddUser(name, email);
 
                         }else{
                             Toast.makeText(RegisterActivity.this, "Error", Toast.LENGTH_LONG).show();
@@ -66,10 +66,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void AddUser(String id, String name, String email){
+    public void AddUser(String name, String email){
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();
-        user.put("id", id);
         user.put("name", name);
         user.put("email", email);
 
