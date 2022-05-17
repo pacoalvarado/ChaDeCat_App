@@ -75,10 +75,10 @@
         tools:ignore="UnknownIdInLayout" />
 
     <Button
-        android:id="@+id/btn_register"
+        android:id="@+id/register"
         android:layout_width="205dp"
         android:layout_height="52dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="72dp"
         android:layout_marginEnd="1dp"
         android:backgroundTint="#8BCA61"
         android:text="@string/action_register"
