@@ -9,6 +9,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.alvarado.chadecat_app.databinding.ActivityPerfil2Binding;
 import com.google.android.material.navigation.NavigationView;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityPerfil2Binding binding;
+    TextView email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityPerfil2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        email = findViewById(R.id.email_id);
 
         setSupportActionBar(binding.appBarPerfil2.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
