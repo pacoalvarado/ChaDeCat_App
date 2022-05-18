@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     boolean isActivateRadioButton;
 
     FirebaseAuth fAuth;
+    FirebaseUser fUser;
     FirebaseFirestore fStore;
     private DatabaseReference mDatabase;
 
@@ -49,10 +51,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        fUser = FirebaseAuth.getInstance().getCurrentUser();
+
         if(stateButton()){
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            //intent.putExtra("email", email);
+            String email = fUser.getEmail();
+            intent.putExtra("email", email);
             startActivity(intent);
+            finish();
         }
 
             email_log = findViewById(R.id.email_login);
@@ -64,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             fAuth = FirebaseAuth.getInstance();
             fStore = FirebaseFirestore.getInstance();
 
+
             isActivateRadioButton = rbSesion.isChecked();
 
             btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -71,14 +78,6 @@ public class LoginActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     String email = email_log.getText().toString().trim();
                     String password = password_log.getText().toString().trim();
-
-                    SharedPreferences sp = getSharedPreferences("SharedEmail", Context.MODE_PRIVATE);
-
-                    SharedPreferences.Editor editor = sp.edit();
-
-                    editor.putString("email", email);
-
-                    editor.commit();
 
                     fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -88,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "Done Login", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.putExtra("email", email);
+
                                 startActivity(intent);
                                 finish();
 

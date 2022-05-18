@@ -9,11 +9,14 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -42,8 +46,11 @@ public class MainActivity extends AppCompatActivity {
     TextView tvemail, tvname;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String comEmail;
+    Button btn_logout;
 
     private DatabaseReference mDatabase;
+
+    FirebaseUser fUser;
 
 
 
@@ -54,10 +61,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityPerfil2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        SharedPreferences sp = getApplicationContext().getSharedPreferences("alvarado.chadecat_app", MODE_PRIVATE);
-        comEmail = sp.getString("email", "");
+        fUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        Toast.makeText(getApplicationContext(), comEmail, Toast.LENGTH_LONG).show();
+        String user = fUser.getEmail();
+
+        comEmail = user;
+
+        //Toast.makeText(getApplicationContext(), user, Toast.LENGTH_LONG).show();
 
         setSupportActionBar(binding.appBarPerfil2.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
@@ -68,12 +78,15 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_favorite)
                 .setOpenableLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_perfil2);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
         ReadUser();
+
     }
+
 
 
     @Override
@@ -93,6 +106,17 @@ public class MainActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 tvname = findViewById(R.id.username_id);
                                 tvemail = findViewById(R.id.email_id);
+
+                                btn_logout = findViewById(R.id.logout);
+
+                                btn_logout.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent i = new Intent(MainActivity.this, HomeActivity.class);
+                                        startActivity(i);
+                                    }
+                                });
+
 
                                 if(document.get("email").equals(comEmail)){
                                     String nameFinal = document.get("name").toString();
