@@ -1,6 +1,7 @@
 package com.alvarado.chadecat_app;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -19,10 +20,15 @@ import com.alvarado.chadecat_app.databinding.ActivityPerfil2Binding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -30,13 +36,14 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final Object TAG = 100;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityPerfil2Binding binding;
     TextView tvemail, tvname;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String comEmail, userId;
 
     private DatabaseReference mDatabase;
+
 
 
     @Override
@@ -46,8 +53,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityPerfil2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        //comEmail = getIntent().getExtras().getString("email");
 
         setSupportActionBar(binding.appBarPerfil2.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
@@ -84,16 +90,15 @@ public class MainActivity extends AppCompatActivity {
                                 tvname = findViewById(R.id.username_id);
                                 tvemail = findViewById(R.id.email_id);
 
-                                if(document.get("name").equals("Prova3")){
+                                if(document.get("email").equals(comEmail)){
                                     String nameFinal = document.get("name").toString();
                                     String emailFinal = document.get("email").toString();
 
                                     tvname.setText(nameFinal);
                                     tvemail.setText(emailFinal);
-
                                 }
 
-                                Log.e("A",document.getId() + " => " + document.getData());
+                                //Log.e("A",document.getId() + " => " + document.getData());
                                 //idUser = document.getId();
                             }
                         } else {
@@ -102,4 +107,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
 }

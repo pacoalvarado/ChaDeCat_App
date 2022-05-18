@@ -26,6 +26,11 @@
 
         <activity
             android:name=".HomeActivity"
+            android:theme="@style/Theme.ChaDeCat_App.NoActionBar"
+            android:exported="false" />
+
+        <activity
+            android:name=".InitialActivity"
             android:exported="true"
             tools:ignore="MissingClass">
             <intent-filter>
