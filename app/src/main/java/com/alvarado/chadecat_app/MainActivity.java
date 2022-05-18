@@ -10,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityPerfil2Binding binding;
     TextView tvemail, tvname;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    String comEmail, userId;
+    String comEmail;
 
     private DatabaseReference mDatabase;
 
@@ -53,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityPerfil2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        //comEmail = getIntent().getExtras().getString("email");
+        SharedPreferences sp = getApplicationContext().getSharedPreferences("alvarado.chadecat_app", MODE_PRIVATE);
+        comEmail = sp.getString("email", "");
+
+        Toast.makeText(getApplicationContext(), comEmail, Toast.LENGTH_LONG).show();
 
         setSupportActionBar(binding.appBarPerfil2.toolbar);
         DrawerLayout drawer = binding.drawerLayout;

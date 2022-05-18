@@ -72,6 +72,14 @@ public class LoginActivity extends AppCompatActivity {
                     String email = email_log.getText().toString().trim();
                     String password = password_log.getText().toString().trim();
 
+                    SharedPreferences sp = getSharedPreferences("SharedEmail", Context.MODE_PRIVATE);
+
+                    SharedPreferences.Editor editor = sp.edit();
+
+                    editor.putString("email", email);
+
+                    editor.commit();
+
                     fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -120,5 +128,6 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(STRING_PREFERENCES, MODE_PRIVATE);
         return sharedPreferences.getBoolean(BUTTON_PREFERENCES, false);
     }
+
 
 }
