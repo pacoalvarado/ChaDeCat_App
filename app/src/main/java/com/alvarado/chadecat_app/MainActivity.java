@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity{
 
         String user = fUser.getEmail();
 
+
+
         comEmail = user;
 
         Fragment fragment = new MapsActivity();
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity{
                                 btn_logout.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Intent i = new Intent(MainActivity.this, MapsActivity.class);
+                                        Intent i = new Intent(MainActivity.this, HomeActivity.class);
                                         startActivity(i);
                                     }
                                 });
