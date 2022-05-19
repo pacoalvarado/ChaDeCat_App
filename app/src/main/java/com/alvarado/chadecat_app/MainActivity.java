@@ -1,24 +1,19 @@
 package com.alvarado.chadecat_app;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import android.content.ClipData;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Debug;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alvarado.chadecat_app.databinding.ActivityPerfil2Binding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,20 +21,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Map;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityPerfil2Binding binding;
@@ -52,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseUser fUser;
 
+    private MapsActivity mMap;
 
 
     @Override
@@ -66,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
         String user = fUser.getEmail();
 
         comEmail = user;
+
+        Fragment fragment = new MapsActivity();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.map, fragment).commit();
+
 
         //Toast.makeText(getApplicationContext(), user, Toast.LENGTH_LONG).show();
 
@@ -112,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                                 btn_logout.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Intent i = new Intent(MainActivity.this, HomeActivity.class);
+                                        Intent i = new Intent(MainActivity.this, MapsActivity.class);
                                         startActivity(i);
                                     }
                                 });
@@ -135,6 +128,5 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
 }

@@ -23,4 +23,5 @@
     <string name="menu_favorite">Favorite</string>
     <string name="logout">Logout</string>
     <string name="title_activity_perfil2">Perfil2Activity</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
