@@ -32,6 +32,11 @@
             android:value="AIzaSyC9i0OxVqCTkQWyQT6szxOhhNVmwDpvvHk" />
 
         <activity
+            android:name=".MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps"
+            tools:ignore="Instantiatable" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
