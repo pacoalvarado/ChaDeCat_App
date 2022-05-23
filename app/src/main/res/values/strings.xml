@@ -21,7 +21,16 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_favorite">Favorite</string>
+    <string name="menu_perfil">Perfil</string>
     <string name="logout">Logout</string>
     <string name="title_activity_perfil2">Perfil2Activity</string>
     <string name="title_activity_maps">MapsActivity</string>
+
+    <string-array name="sp_model">
+        <item>Model S</item>
+        <item>CUPRA Born</item>
+        <item>e-tron</item>
+        <item>bZ4X</item>
+    </string-array>
+
 </resources>

@@ -1,6 +1,7 @@
 package com.alvarado.chadecat_app;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -47,14 +49,21 @@ public class MainActivity extends AppCompatActivity {
     TextView tvemail, tvname;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String comEmail;
-    Button btn_logout;
+    View v_logout, v_perfil;
 
     private DatabaseReference mDatabase;
 
     FirebaseUser fUser;
 
     FusedLocationProviderClient fusedLocationProviderClient;
+    Fragment mapsFragment;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("MAIN ACTIVITy", "S'executa el resume");
+        getSupportFragmentManager().beginTransaction().replace(R.id.map, mapsFragment).commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
         String user = fUser.getEmail();
 
+
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         comEmail = user;
 
-        Fragment fragment = new MapsActivity();
+        mapsFragment = new MapsActivity();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.map, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.map, mapsFragment).commit();
 
 
         //Toast.makeText(getApplicationContext(), user, Toast.LENGTH_LONG).show();
@@ -84,9 +95,11 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_favorite)
+                R.id.nav_home, R.id.nav_perfil)
                 .setOpenableLayout(drawer)
                 .build();
+
+
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_perfil2);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -115,9 +128,11 @@ public class MainActivity extends AppCompatActivity {
                                 tvname = findViewById(R.id.username_id);
                                 tvemail = findViewById(R.id.email_id);
 
-                                btn_logout = findViewById(R.id.logout);
+                                v_logout = findViewById(R.id.nav_logout);
+                                v_perfil = findViewById(R.id.nav_perfil);
 
-                                btn_logout.setOnClickListener(new View.OnClickListener() {
+
+                                v_logout.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         SharedPreferences preferences = getSharedPreferences("alvarado.chadecat_app", MODE_PRIVATE);
@@ -145,6 +160,4 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
-
 }

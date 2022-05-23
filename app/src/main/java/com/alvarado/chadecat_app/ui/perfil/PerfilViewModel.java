@@ -1,16 +1,17 @@
-package com.alvarado.chadecat_app.ui.gallery;
+package com.alvarado.chadecat_app.ui.perfil;
+
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+public class PerfilViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public GalleryViewModel() {
+    public PerfilViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Perfil");
+        mText.setValue("Usuari");
     }
 
     public LiveData<String> getText() {

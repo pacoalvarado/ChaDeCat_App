@@ -1,5 +1,6 @@
 package com.alvarado.chadecat_app.ui.gallery;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.alvarado.chadecat_app.HomeActivity;
 import com.alvarado.chadecat_app.databinding.ActivityMapsBinding;
 
 public class GalleryFragment extends Fragment {
@@ -26,6 +28,7 @@ public class GalleryFragment extends Fragment {
 
         //final TextView textView = binding.textGallery;
         //galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
         return root;
     }
 
