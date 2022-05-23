@@ -14,6 +14,11 @@
             android:title="@string/menu_perfil" />
 
         <item
+            android:id="@+id/nav_recent_places"
+            android:icon="@drawable/ic_baseline_history_24"
+            android:title="@string/menu_favorite" />
+
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_baseline_exit_to_app_24"
             android:title="@string/logout"/>

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="nav_logout" type="id" />
+    <item name="info_window_image" type="id" />
+    <item name="info_window_city" type="id" />
+    <item name="info_window_lat" type="id" />
+    <item name="info_window_lon" type="id" />
 </resources>
