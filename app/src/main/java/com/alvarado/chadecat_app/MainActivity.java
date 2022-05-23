@@ -27,6 +27,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.alvarado.chadecat_app.databinding.ActivityPerfil2Binding;
+import com.alvarado.chadecat_app.ui.maps.MapsFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -79,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
         comEmail = user;
 
+        Fragment fragment = new MapsFragment();
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.mapa, fragment).commit();
 
 
         //Toast.makeText(getApplicationContext(), user, Toast.LENGTH_LONG).show();
