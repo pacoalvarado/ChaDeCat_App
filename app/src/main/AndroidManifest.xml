@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.alvarado.chadecat_app" >
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION"
@@ -32,7 +34,7 @@
             android:value="AIzaSyC9i0OxVqCTkQWyQT6szxOhhNVmwDpvvHk" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".MapsActivity1"
             android:exported="false"
             android:label="@string/title_activity_maps"
             tools:ignore="Instantiatable" />

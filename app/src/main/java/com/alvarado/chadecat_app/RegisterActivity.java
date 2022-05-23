@@ -45,13 +45,13 @@ public class RegisterActivity extends AppCompatActivity {
         tvPassword = findViewById(R.id.password_register);
         btnRegister = findViewById(R.id.register);
 
-        spModel = findViewById(R.id.sp_model);
+       /* spModel = findViewById(R.id.sp_model);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.sp_model, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spModel.setAdapter(adapter);
+        spModel.setAdapter(adapter);*/
 
 
         fAuth = FirebaseAuth.getInstance();

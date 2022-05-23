@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -28,6 +29,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.alvarado.chadecat_app.databinding.ActivityPerfil2Binding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -58,12 +60,7 @@ public class MainActivity extends AppCompatActivity {
     FusedLocationProviderClient fusedLocationProviderClient;
     Fragment mapsFragment;
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("MAIN ACTIVITy", "S'executa el resume");
-        getSupportFragmentManager().beginTransaction().replace(R.id.map, mapsFragment).commit();
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +79,12 @@ public class MainActivity extends AppCompatActivity {
 
         comEmail = user;
 
-        mapsFragment = new MapsActivity();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.map, mapsFragment).commit();
 
 
         //Toast.makeText(getApplicationContext(), user, Toast.LENGTH_LONG).show();
 
-        setSupportActionBar(binding.appBarPerfil2.toolbar);
+        setSupportActionBar(findViewById(R.id.toolbar));
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each

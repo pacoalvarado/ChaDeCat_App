@@ -12,18 +12,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.alvarado.chadecat_app.HomeActivity;
-import com.alvarado.chadecat_app.databinding.ActivityMapsBinding;
+import com.alvarado.chadecat_app.databinding.ActivityMaps1Binding;
 
 public class GalleryFragment extends Fragment {
 
-    private ActivityMapsBinding binding;
+    private ActivityMaps1Binding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         GalleryViewModel galleryViewModel =
                 new ViewModelProvider(this).get(GalleryViewModel.class);
 
-        binding = ActivityMapsBinding.inflate(inflater, container, false);
+        binding = ActivityMaps1Binding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         //final TextView textView = binding.textGallery;

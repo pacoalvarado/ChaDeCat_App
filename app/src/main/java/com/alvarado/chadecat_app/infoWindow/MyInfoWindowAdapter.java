@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-import com.alvarado.chadecat_app.MapsActivity;
+import com.alvarado.chadecat_app.MapsActivity1;
 import com.alvarado.chadecat_app.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
@@ -22,11 +22,6 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     public MyInfoWindowAdapter(Context context) {
 
         this.context = context;
-    }
-
-    public MyInfoWindowAdapter(MapsActivity marker) {
-
-
     }
 
     @Nullable

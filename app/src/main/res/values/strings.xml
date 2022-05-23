@@ -21,7 +21,7 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_favorite">Saved places</string>
-    <string name="nav_recent_places">Recent places</string>
+    <string name="menu_perfil">Perfil</string>
     <string name="logout">Logout</string>
     <string name="title_activity_perfil2">Perfil2Activity</string>
     <string name="title_activity_maps">MapsActivity</string>
