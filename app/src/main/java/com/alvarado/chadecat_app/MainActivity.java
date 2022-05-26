@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -28,6 +29,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.alvarado.chadecat_app.databinding.ActivityPerfil2Binding;
 import com.alvarado.chadecat_app.ui.maps.MapsFragment;
+import com.alvarado.chadecat_app.ui.perfil.PerfilFragment;
+import com.alvarado.chadecat_app.ui.perfil.PerfilViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         binding = ActivityPerfil2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -152,11 +157,9 @@ public class MainActivity extends AppCompatActivity {
                                     tvemail.setText(emailFinal);
                                 }
 
-                                //Log.e("A",document.getId() + " => " + document.getData());
-                                //idUser = document.getId();
+
                             }
                         } else {
-                            //Log.w(TAG, "Error getting documents.", task.getException());
                         }
                     }
                 });

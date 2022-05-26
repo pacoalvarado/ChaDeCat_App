@@ -1,23 +1,20 @@
-package com.alvarado.chadecat_app.ui.perfil;
+package com.alvarado.chadecat_app;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.alvarado.chadecat_app.R;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.alvarado.chadecat_app.databinding.ActivityPerfilBinding;
-import com.alvarado.chadecat_app.secondFragment;
+import com.alvarado.chadecat_app.databinding.FragmentSecondBinding;
+import com.alvarado.chadecat_app.ui.perfil.PerfilFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,22 +23,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class PerfilFragment extends Fragment {
-
-    private ActivityPerfilBinding binding;
+public class secondFragment extends Fragment {
+    private FragmentSecondBinding binding;
 
     FirebaseUser fUser;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String comEmail;
     TextView tvName, tvEmail, tvModel;
 
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        PerfilViewModel perfilViewModel = new ViewModelProvider(this).get(PerfilViewModel.class);
+        View view = inflater.inflate(R.layout.fragment_second, container, false);
 
-
-        binding = ActivityPerfilBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
         fUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -51,27 +43,22 @@ public class PerfilFragment extends Fragment {
 
         ReadUser();
 
-
-        binding = ActivityPerfilBinding.inflate(getLayoutInflater());
-
-
+        binding = FragmentSecondBinding.inflate(getLayoutInflater());
         return binding.getRoot();
-
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState){
 
-        binding.btnEdit.setOnClickListener(new View.OnClickListener() {
+        binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Fragment secondFragment = new secondFragment();
+                Fragment perfilFragment = new PerfilFragment();
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment_content_perfil2, secondFragment);
-                //fragmentTransaction.add(secondFragment, "2");
+                fragmentTransaction.replace(R.id.replace, perfilFragment);
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-
             }
         });
     }
@@ -79,8 +66,8 @@ public class PerfilFragment extends Fragment {
 
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         binding = null;
     }
 

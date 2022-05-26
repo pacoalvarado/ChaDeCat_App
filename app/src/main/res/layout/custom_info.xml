@@ -1,34 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/design_default_color_primary"
-    android:padding="10dp">
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/white">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="335dp"
         android:layout_height="wrap_content"
-        android:text="Tittle"
-        android:id="@+id/title"
-        android:textSize="20sp">
+        android:orientation="vertical">
 
-    </TextView>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#5881B5">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Snipp"
-        android:id="@+id/snipp"
-        android:layout_marginTop="3dp"></TextView>
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Titol"
+                android:textAllCaps="true"
+                android:textColor="#000"
+                android:textIsSelectable="false"
+                android:textSize="18sp" />
+        </FrameLayout>
 
 
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        <TextView
+            android:id="@+id/snipp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Snipp"
+            android:textAllCaps="true"
+            android:textColor="#000"
+            android:textSize="13sp" />
 
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="330dp"
+            android:layout_height="163dp"
+            android:layout_gravity="center_horizontal"
+            android:baselineAlignBottom="false"
+            android:textAlignment="center"
+            app:srcCompat="@drawable/imageloc" />
+
+        <Button
+            android:id="@+id/btnRoute"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#000000"
+            android:textAlignment="center"
+            app:backgroundTint="#000000"
+            app:icon="@drawable/ic_baseline_alt_route_24"
+            app:iconGravity="textTop"
+            app:iconTint="#FFFFFF" />
+
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>
