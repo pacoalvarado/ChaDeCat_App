@@ -6,12 +6,16 @@
         <item name="colorControlNormal">@color/chadecat</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar"></style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"></style>
 
     <style name="AppTheme.CustomTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
         <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="AppTheme.NoAction" parent="Theme.AppCompat.Light.NoActionBar">
+
     </style>
 
 

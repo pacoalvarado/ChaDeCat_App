@@ -28,4 +28,11 @@
     <string name="title_activity_maps">MapsActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="sp_model">
+        <item>e-tron</item>
+        <item>Model S</item>
+        <item>Model X</item>
+        <item>Toyota</item>
+    </string-array>
 </resources>

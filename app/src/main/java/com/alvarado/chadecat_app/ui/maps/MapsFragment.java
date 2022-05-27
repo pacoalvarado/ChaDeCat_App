@@ -80,7 +80,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
     private FusedLocationProviderClient fusedLocationClient;
     LatLng miUbicacion, punt1, punt2, puntF, punt;
     private Polyline mPolyline;
-    Button btn_min;
+    Button btn_min, btn_ruta, btn_msg, btn_reserva;
     Location uFinal, uFinal1, locationF;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
@@ -93,8 +93,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
         this.contenidor = container;
 
         getLocalizacion();
-
-
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapa);
 
@@ -193,6 +191,9 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                                         Log.d("EMAIL", emailUserRes);
                                                         Log.d("EMAILR", usuariReservat);
 
+                                                        btn_msg = getActivity().findViewById(R.id.btn_msg);
+                                                        btn_ruta = getActivity().findViewById(R.id.btn_ruta);
+                                                        btn_reserva = getActivity().findViewById(R.id.btn_reservar);
 
 
 
@@ -207,10 +208,37 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                                            location.setLongitude(longitudeFinal);
 
 
+
                                                            mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal));
-                                                           mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+                                                           //mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+                                                           mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                                               @Override
+                                                               public boolean onMarkerClick(@NonNull Marker marker) {
 
 
+                                                                   btn_msg.setOnClickListener(new View.OnClickListener() {
+                                                                       @Override
+                                                                       public void onClick(View view) {
+                                                                           startActivity(new Intent(getActivity(), Pop.class));
+                                                                       }
+                                                                   });
+
+                                                                   btn_ruta.setOnClickListener(new View.OnClickListener() {
+                                                                       @Override
+                                                                       public void onClick(View view) {
+                                                                           Intent i = new Intent(Intent.ACTION_VIEW);
+
+                                                                           i.setData(Uri.parse("geo:36.4103,44.3872?q=36.4103,44.3872"));
+
+                                                                           startActivity(i);
+                                                                       }
+                                                                   });
+
+                                                                   return false;
+                                                               }
+                                                           });
+
+                                                           //Log.e("Fora2", String.valueOf(m.isInfoWindowShown()));
 
                                                            float distance = actual.distanceTo(location) / 1000;
 
@@ -225,12 +253,12 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                             }
                                         });
 
-
+                                //Log.e("Fora3", String.valueOf(m.isInfoWindowShown()));
                                 btn_min = getActivity().findViewById(R.id.btn_buscar_min);
                                 btn_min.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        /*float min = Collections.min(mapDistance.keySet());
+                                        float min = Collections.min(mapDistance.keySet());
 
                                         LatLng latLngMasCercano = mapDistance.get(min);
 
@@ -238,15 +266,17 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
                                         puntF = new LatLng(latLngMasCercano.latitude, latLngMasCercano.longitude);
 
-                                        mMap.addMarker(new MarkerOptions().position(puntF).title("PuntFinal"));*/
-
-                                        startActivity(new Intent(getActivity(), Pop.class));
-
+                                        mMap.addMarker(new MarkerOptions().position(puntF).title("PuntFinal"));
 
                                         //drawRoute();
 
                                     }
                                 });
+
+
+
+
+
                             }
                         });
 

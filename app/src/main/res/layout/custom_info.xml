@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,45 +7,15 @@
     android:orientation="horizontal"
     android:background="@color/white">
 
-    <Button
-        android:id="@+id/btn_msg"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="#000000"
-        android:textAlignment="center"
-        app:backgroundTint="#000000"
-        app:icon="@drawable/ic_baseline_alt_route_24"
-        app:iconGravity="textTop"
-        app:iconTint="#FFFFFF"
-        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck"
-        tools:layout_editor_absoluteX="276dp"
-        tools:layout_editor_absoluteY="159dp" />
-
-    <Button
-        android:id="@+id/btnRoute"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="#000000"
-        android:textAlignment="center"
-        app:backgroundTint="#000000"
-        app:icon="@drawable/ic_launcher_perfil"
-        app:iconGravity="textTop"
-        app:iconTint="#FFFFFF"
-        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck"
-        tools:layout_editor_absoluteY="159dp" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="336dp"
-        android:layout_height="219dp"
+    <LinearLayout
+        android:layout_width="335dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <FrameLayout
-            android:id="@+id/frameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#5881B5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:background="#5881B5">
 
             <TextView
                 android:id="@+id/title"
@@ -67,19 +37,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginStart="150dp"
-            android:layout_marginTop="13dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Snipp"
             android:textAllCaps="true"
             android:textColor="#000"
-            android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+            android:textSize="13sp" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="330dp"
+            android:layout_height="163dp"
+            android:layout_gravity="center_horizontal"
+            android:baselineAlignBottom="false"
+            android:textAlignment="center"
+            app:srcCompat="@drawable/imageloc" />
+
+        <Button
+            android:id="@+id/btnRoute"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="#000000"
+            android:textAlignment="center"
+            app:backgroundTint="#000000"
+            app:icon="@drawable/ic_launcher_perfil"
+            app:iconGravity="textTop"
+            app:iconTint="#FFFFFF"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+        <Button
+            android:id="@+id/btn_msg"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="275dp"
+            android:background="#000000"
+            android:textAlignment="center"
+            app:backgroundTint="#000000"
+            app:icon="@drawable/ic_baseline_alt_route_24"
+            app:iconGravity="textTop"
+            app:iconTint="#FFFFFF"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+
+
+</RelativeLayout>
