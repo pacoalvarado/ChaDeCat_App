@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -49,7 +50,7 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
         title.setText(marker.getTitle());
         snipp.setText(marker.getSnippet());
 
-
+        Log.e("**LOG**", "A");
 
         return infoView;
     }

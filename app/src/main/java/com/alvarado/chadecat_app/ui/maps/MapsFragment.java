@@ -85,6 +85,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+    boolean show;
 
     @Nullable
     @Override
@@ -145,22 +146,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
 
-
-
-
-                /*
-                mMap = googleMap;
-
-                // Add a marker in Sydney and move the camera
-
-                LatLng sydney = new LatLng(41.721772, 1.818171);
-                //googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Joviat"));
-                mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_icon_gps)).anchor(0.0f, 1.0f).position(sydney).title("Joviat"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 30));
-
-                LatLng punt1 = new LatLng(41.722407, 1.818083);
-                mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_icon_recharge)).anchor(0.0f, 1.0f).position(punt1).title("EdR CONSUM Manresa").snippet("CONSUM - Carrer de Sant Joan d'en Coll, Manresa\n ACCÉS: targeta.\n Mennekes sense cable MNK (20kW)"));
-*/
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(container.getContext());
                 fusedLocationClient.getLastLocation()
                         .addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -169,9 +154,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                 actual = location;
 
                                 miUbicacion = new LatLng(actual.getLatitude(), actual.getLongitude());
-                                //mMap.addMarker(new MarkerOptions().position(miUbicacion).title("ubicacion actual"));
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(miUbicacion, 30));
-                                //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
 
                                 db.collection("puntsrecarrega")
@@ -209,11 +192,20 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
 
 
-                                                           mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal));
-                                                           //mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+                                                           Marker m = mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal));
+                                                           mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+
+                                                           show = m.isInfoWindowShown();
+
+                                                           Log.e("AD", String.valueOf(show));
+
                                                            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                                                @Override
                                                                public boolean onMarkerClick(@NonNull Marker marker) {
+
+                                                                   btn_ruta.setVisibility(View.VISIBLE);
+                                                                   btn_reserva.setVisibility(View.VISIBLE);
+                                                                   btn_msg.setVisibility(View.VISIBLE);
 
 
                                                                    btn_msg.setOnClickListener(new View.OnClickListener() {
@@ -237,8 +229,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                                                    return false;
                                                                }
                                                            });
-
-                                                           //Log.e("Fora2", String.valueOf(m.isInfoWindowShown()));
 
                                                            float distance = actual.distanceTo(location) / 1000;
 
@@ -290,7 +280,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
         return  view;
     }
-
 
 
     private void getLocalizacion() {
