@@ -21,7 +21,6 @@
     <string name="google_maps_key">AIzaSyC9i0OxVqCTkQWyQT6szxOhhNVmwDpvvHk</string>
 
     <string name="menu_home">Home</string>
-    <string name="menu_favorite">Other Options</string>
     <string name="menu_perfil">Perfil</string>
     <string name="logout">Logout</string>
     <string name="title_activity_perfil2">Perfil2Activity</string>

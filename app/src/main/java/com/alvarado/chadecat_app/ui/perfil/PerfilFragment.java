@@ -1,15 +1,12 @@
 package com.alvarado.chadecat_app.ui.perfil;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.alvarado.chadecat_app.R;
 import com.alvarado.chadecat_app.databinding.ActivityPerfilBinding;
-import com.alvarado.chadecat_app.secondFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,19 +57,6 @@ public class PerfilFragment extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState){
 
-        binding.btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Fragment secondFragment = new secondFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.nav_host_fragment_content_perfil2, secondFragment);
-                //fragmentTransaction.add(secondFragment, "2");
-                fragmentTransaction.commit();
-
-            }
-        });
     }
 
 

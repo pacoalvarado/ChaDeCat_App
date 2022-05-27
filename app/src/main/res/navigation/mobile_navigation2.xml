@@ -26,11 +26,6 @@
         android:name="com.alvarado.chadecat_app.secondFragment"
         android:label="fragment_second"
         tools:layout="@layout/fragment_second" />
-    <fragment
-        android:id="@+id/otherOptions"
-        android:name="com.alvarado.chadecat_app.ui.other.OtherOptions"
-        android:label="fragment_other_options"
-        tools:layout="@layout/fragment_other_options" />
 
 
 </navigation>

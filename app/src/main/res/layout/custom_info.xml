@@ -8,8 +8,8 @@
     android:background="@color/white">
 
     <LinearLayout
-        android:layout_width="335dp"
-        android:layout_height="wrap_content"
+        android:layout_width="236dp"
+        android:layout_height="107dp"
         android:orientation="vertical">
 
         <FrameLayout
@@ -43,41 +43,6 @@
             android:textAllCaps="true"
             android:textColor="#000"
             android:textSize="13sp" />
-
-
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="330dp"
-            android:layout_height="163dp"
-            android:layout_gravity="center_horizontal"
-            android:baselineAlignBottom="false"
-            android:textAlignment="center"
-            app:srcCompat="@drawable/imageloc" />
-
-        <Button
-            android:id="@+id/btnRoute"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="#000000"
-            android:textAlignment="center"
-            app:backgroundTint="#000000"
-            app:icon="@drawable/ic_launcher_perfil"
-            app:iconGravity="textTop"
-            app:iconTint="#FFFFFF"
-            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
-
-        <Button
-            android:id="@+id/btn_msg"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="275dp"
-            android:background="#000000"
-            android:textAlignment="center"
-            app:backgroundTint="#000000"
-            app:icon="@drawable/ic_baseline_alt_route_24"
-            app:iconGravity="textTop"
-            app:iconTint="#FFFFFF"
-            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
 
     </LinearLayout>

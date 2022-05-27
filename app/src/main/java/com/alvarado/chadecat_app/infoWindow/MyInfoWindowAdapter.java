@@ -44,14 +44,8 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
         ImageView imageView = infoView.findViewById(R.id.imageView6);
         TextView title = infoView.findViewById(R.id.title);
         TextView snipp = infoView.findViewById(R.id.snipp);
-        Button btnRoute = infoView.findViewById(R.id.btnRoute);
-        btnRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onMyLocationButtonClick();
-            }
-        });
-        //imageView.setImageDrawable(imageView.getResources().getDrawable(R.drawable.ic_baseline_exit_to_app_24));
+
+
         title.setText(marker.getTitle());
         snipp.setText(marker.getSnippet());
 
