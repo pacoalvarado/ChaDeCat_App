@@ -1,24 +1,22 @@
 package com.alvarado.chadecat_app.ui.maps;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,29 +24,67 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.alvarado.chadecat_app.DirectionJSONParser;
+import com.alvarado.chadecat_app.Pop;
 import com.alvarado.chadecat_app.R;
 import com.alvarado.chadecat_app.infoWindow.MyInfoWindowAdapter;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class MapsFragment extends Fragment   {
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener {
     GoogleMap mMap;
     ViewGroup contenidor;
     Location actual;
     private FusedLocationProviderClient fusedLocationClient;
-    LatLng miUbicacion, punt1, punt2, puntF;
-    //private Polyline mPolyline;
-    Button btn_geo;
-
+    LatLng miUbicacion, punt1, punt2, puntF, punt;
+    private Polyline mPolyline;
+    Button btn_min;
+    Location uFinal, uFinal1, locationF;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    Map<Float, LatLng> mapDistance = new HashMap<>();
+    FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
 
     @Nullable
     @Override
@@ -57,6 +93,8 @@ public class MapsFragment extends Fragment   {
         this.contenidor = container;
 
         getLocalizacion();
+
+
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapa);
 
@@ -71,7 +109,8 @@ public class MapsFragment extends Fragment   {
                 mMap.setMyLocationEnabled(true);
 
 
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
                 LocationManager locationManager = (LocationManager) container.getContext().getSystemService(Context.LOCATION_SERVICE);
                 LocationListener locationListener = new LocationListener() {
@@ -136,48 +175,116 @@ public class MapsFragment extends Fragment   {
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(miUbicacion, 30));
                                 //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                                punt1 = new LatLng(41.723102, 1.818289);
-                                Location uFinal = new Location("punt1");
-                                uFinal.setLatitude(41.723102);
-                                uFinal.setLongitude(1.818083);
-                                punt2 = new LatLng(41.722456, 1.818102);
-                                Location uFinal1 = new Location("punt2");
-                                uFinal1.setLatitude(41.722456);
-                                uFinal1.setLongitude(1.818102);
-                                mMap.addMarker(new MarkerOptions().position(punt2).title("Punt2"));
-                                mMap.addMarker(new MarkerOptions().position(punt1).title("EdR CONSUM Manresa").snippet("CONSUM - Carrer de Sant Joan d'en Coll, Manresa\n ACCÉS: targeta.\n Mennekes sense cable MNK (20kW)"));
-                                mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
-                                //drawRoute();
+
+                                db.collection("puntsrecarrega")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                       String nameFinal = document.get("nom").toString();
+                                                       String latitude = document.get("latitude").toString();
+                                                       String longitude = document.get("longitude").toString();
+                                                       Boolean reservat = document.getBoolean("reservat");
+                                                       String usuariReservat = document.get("usuariReservat").toString();
+
+                                                        String emailUserRes = fUser.getEmail();
+                                                        Log.d("EMAIL", emailUserRes);
+                                                        Log.d("EMAILR", usuariReservat);
 
 
 
 
+                                                       if(usuariReservat.equals(emailUserRes) || !reservat){
 
+                                                           double latitudeFinal = Double.parseDouble(latitude);
+                                                           double longitudeFinal = Double.parseDouble(longitude);
+
+                                                           punt = new LatLng(latitudeFinal, longitudeFinal);
+
+                                                           location.setLatitude(latitudeFinal);
+                                                           location.setLongitude(longitudeFinal);
+
+
+                                                           mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal));
+                                                           mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+
+
+
+                                                           float distance = actual.distanceTo(location) / 1000;
+
+                                                           mapDistance.put(distance, punt);
+
+
+                                                       }
+
+                                                    }
+                                                } else {
+                                                }
+                                            }
+                                        });
+
+
+                                btn_min = getActivity().findViewById(R.id.btn_buscar_min);
+                                btn_min.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        /*float min = Collections.min(mapDistance.keySet());
+
+                                        LatLng latLngMasCercano = mapDistance.get(min);
+
+                                        mMap.clear();
+
+                                        puntF = new LatLng(latLngMasCercano.latitude, latLngMasCercano.longitude);
+
+                                        mMap.addMarker(new MarkerOptions().position(puntF).title("PuntFinal"));*/
+
+                                        startActivity(new Intent(getActivity(), Pop.class));
+
+
+                                        //drawRoute();
+
+                                    }
+                                });
                             }
                         });
+
+
 
 
             }
         });
 
-        return view;
+
+
+        return  view;
     }
+
 
 
     private void getLocalizacion() {
         int permiso = ContextCompat.checkSelfPermission(contenidor.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (permiso == PackageManager.PERMISSION_DENIED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-            } else {
+        if(permiso == PackageManager.PERMISSION_DENIED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)){
+            }else{
                 ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
     }
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return true;
+    }
 
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
 
+    }
 
-    /*private void drawRoute(){
+/*
+    private void drawRoute(){
 
         // Getting URL to the Google Directions API
         String url = getDirectionsUrl(miUbicacion, puntF);
@@ -186,10 +293,10 @@ public class MapsFragment extends Fragment   {
 
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
-    }*/
+    }
 
 
-    /*private String getDirectionsUrl(LatLng origin,LatLng dest){
+    private String getDirectionsUrl(LatLng origin,LatLng dest){
 
         // Origin of route
         String str_origin = "origin="+origin.latitude+","+origin.longitude;
@@ -210,10 +317,10 @@ public class MapsFragment extends Fragment   {
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
         Log.e("URL", url);
         return url;
-    }*/
+    }
 
-/** A method to download json data from url */
-    /*private String downloadUrl(String strUrl) throws IOException {
+
+    private String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
@@ -249,10 +356,10 @@ public class MapsFragment extends Fragment   {
             urlConnection.disconnect();
         }
         return data;
-    }*/
+    }
 
-/** A class to download data from Google Directions URL */
-    /*private class DownloadTask extends AsyncTask<String, Void, String> {
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
 
         // Downloading data in non-ui thread
         @Override
@@ -282,10 +389,10 @@ public class MapsFragment extends Fragment   {
             // Invokes the thread for parsing the JSON data
             parserTask.execute(result);
         }
-    }*/
+    }
 
-/** A class to parse the Google Directions in JSON format */
-    /*private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
 
         // Parsing the data in non-ui thread
         @Override
@@ -348,4 +455,6 @@ public class MapsFragment extends Fragment   {
                 Toast.makeText(getActivity(),"No route is found", Toast.LENGTH_LONG).show();
         }
     }*/
+
+
 }
