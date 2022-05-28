@@ -4,19 +4,16 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,30 +21,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.alvarado.chadecat_app.DirectionJSONParser;
 import com.alvarado.chadecat_app.Pop;
 import com.alvarado.chadecat_app.R;
 import com.alvarado.chadecat_app.infoWindow.MyInfoWindowAdapter;
-import com.directions.route.Route;
-import com.directions.route.RouteException;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -57,35 +44,29 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
 public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener {
     GoogleMap mMap;
+
     ViewGroup contenidor;
     Location actual;
     private FusedLocationProviderClient fusedLocationClient;
     LatLng miUbicacion, punt1, punt2, puntF, punt;
     private Polyline mPolyline;
-    Button btn_min, btn_ruta, btn_msg, btn_reserva;
+    Button btn_min, btn_ruta, btn_msg, btn_reserva, btn_close;
     Location uFinal, uFinal1, locationF;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
     boolean show;
+    Marker m;
+    int a = 0;
+    Fragment map;
 
     @Nullable
     @Override
@@ -142,6 +123,8 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                     public void onProviderDisabled(String provider) {
 
                     }
+
+
                 };
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
@@ -165,6 +148,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                        String nameFinal = document.get("nom").toString();
+                                                       String carrerFinal = document.get("carrer").toString();
                                                        String latitude = document.get("latitude").toString();
                                                        String longitude = document.get("longitude").toString();
                                                        Boolean reservat = document.getBoolean("reservat");
@@ -177,6 +161,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                                         btn_msg = getActivity().findViewById(R.id.btn_msg);
                                                         btn_ruta = getActivity().findViewById(R.id.btn_ruta);
                                                         btn_reserva = getActivity().findViewById(R.id.btn_reservar);
+                                                        btn_close = getActivity().findViewById(R.id.btn_close);
 
 
 
@@ -192,47 +177,48 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
 
 
-                                                           Marker m = mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal));
-                                                           mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+                                                           m = mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal).snippet(carrerFinal));
 
-                                                           show = m.isInfoWindowShown();
 
-                                                           Log.e("AD", String.valueOf(show));
 
-                                                           mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+
+                                                          mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                                                @Override
                                                                public boolean onMarkerClick(@NonNull Marker marker) {
+                                                                   if(a == 0){
+                                                                       a = 1;
+                                                                       mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+                                                                       btn_ruta.setVisibility(View.VISIBLE);
+                                                                       btn_reserva.setVisibility(View.VISIBLE);
+                                                                       btn_msg.setVisibility(View.VISIBLE);
+                                                                       marker.showInfoWindow();
+                                                                   }else {
 
-                                                                   btn_ruta.setVisibility(View.VISIBLE);
-                                                                   btn_reserva.setVisibility(View.VISIBLE);
-                                                                   btn_msg.setVisibility(View.VISIBLE);
+                                                                       btn_ruta.setVisibility(View.INVISIBLE);
+                                                                       btn_reserva.setVisibility(View.INVISIBLE);
+                                                                       btn_msg.setVisibility(View.INVISIBLE);
+                                                                       marker.hideInfoWindow();
+                                                                       a = 0;
+                                                                   }
 
+                                                                   return true;
 
-                                                                   btn_msg.setOnClickListener(new View.OnClickListener() {
-                                                                       @Override
-                                                                       public void onClick(View view) {
-                                                                           startActivity(new Intent(getActivity(), Pop.class));
-                                                                       }
-                                                                   });
-
-                                                                   btn_ruta.setOnClickListener(new View.OnClickListener() {
-                                                                       @Override
-                                                                       public void onClick(View view) {
-                                                                           Intent i = new Intent(Intent.ACTION_VIEW);
-
-                                                                           i.setData(Uri.parse("geo:36.4103,44.3872?q=36.4103,44.3872"));
-
-                                                                           startActivity(i);
-                                                                       }
-                                                                   });
-
-                                                                   return false;
                                                                }
+
+
                                                            });
+
+
+
+
+
 
                                                            float distance = actual.distanceTo(location) / 1000;
 
                                                            mapDistance.put(distance, punt);
+
+
 
 
                                                        }
@@ -243,7 +229,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                             }
                                         });
 
-                                //Log.e("Fora3", String.valueOf(m.isInfoWindowShown()));
                                 btn_min = getActivity().findViewById(R.id.btn_buscar_min);
                                 btn_min.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -282,6 +267,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
     }
 
 
+
     private void getLocalizacion() {
         int permiso = ContextCompat.checkSelfPermission(contenidor.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
         if(permiso == PackageManager.PERMISSION_DENIED){
@@ -301,6 +287,10 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
     public void onMyLocationClick(@NonNull Location location) {
 
     }
+
+
+
+
 
 /*
     private void drawRoute(){

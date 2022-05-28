@@ -25,13 +25,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 
-public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleMap.OnMyLocationButtonClickListener {
+public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleMap.OnMyLocationButtonClickListener{
 
     Context context;
-    Bitmap image;
+    int a = 0;
 
     public MyInfoWindowAdapter(Context context) {
-
         this.context = context;
     }
 
@@ -42,7 +41,6 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
     @Override
     public View getInfoWindow(@NonNull Marker marker) {
         View infoView = LayoutInflater.from(context).inflate(R.layout.custom_info, null);
-        ImageView imageView = infoView.findViewById(R.id.imageView6);
         TextView title = infoView.findViewById(R.id.title);
         TextView snipp = infoView.findViewById(R.id.snipp);
 
@@ -50,9 +48,18 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
         title.setText(marker.getTitle());
         snipp.setText(marker.getSnippet());
 
-        Log.e("**LOG**", "A");
+        Log.e("**A", "true");
 
-        return infoView;
+
+        if(a == 0){
+            a = 1;
+            return infoView;
+        }else {
+
+            marker.hideInfoWindow();
+            a = 0;
+            return null;
+        }
     }
 
     @Nullable
@@ -67,7 +74,4 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
     public boolean onMyLocationButtonClick() {
         return false;
     }
-
-
-
 }
