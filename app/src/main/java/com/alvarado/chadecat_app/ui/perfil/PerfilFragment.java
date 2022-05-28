@@ -77,20 +77,19 @@ public class PerfilFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 tvName = getActivity().findViewById(R.id.tvName);
                                 tvEmail = getActivity().findViewById(R.id.tvEmail);
-                                tvModel = getActivity().findViewById(R.id.tvModel);
 
 
 
                                 if (document.get("email").equals(comEmail)) {
                                     String nameFinal = document.get("name").toString();
                                     String emailFinal = document.get("email").toString();
-                                    String modelFinal = document.get("model").toString();
+
 
 
 
                                     tvName.setText(nameFinal);
                                     tvEmail.setText(emailFinal);
-                                    tvModel.setText(modelFinal);
+
                                 }
 
 

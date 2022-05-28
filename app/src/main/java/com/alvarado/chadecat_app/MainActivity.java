@@ -149,9 +149,9 @@ public class MainActivity extends AppCompatActivity {
                                 if (document.get("email").equals(comEmail)) {
                                     String nameFinal = document.get("name").toString();
                                     String emailFinal = document.get("email").toString();
-                                    String modelFinal = document.get("model").toString();
+                                    //String modelFinal = document.get("model").toString();
 
-                                    Log.e("Name", "name" + modelFinal);
+                                    Log.e("Name", "name");
 
                                     tvname.setText(nameFinal);
                                     tvemail.setText(emailFinal);

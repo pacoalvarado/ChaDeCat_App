@@ -17,7 +17,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        btnRegister = findViewById(R.id.register);
+        btnRegister = findViewById(R.id.exit);
         btnLogin = findViewById(R.id.login);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
