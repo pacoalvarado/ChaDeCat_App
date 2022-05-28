@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,14 +45,31 @@ public class RegisterActivity extends AppCompatActivity {
         tvEmail = findViewById(R.id.email);
         tvPassword = findViewById(R.id.password_register);
         btnRegister = findViewById(R.id.register);
+        spModel = findViewById(R.id.sp_model);
 
-       /* spModel = findViewById(R.id.sp_model);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.sp_model, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spModel.setAdapter(adapter);*/
+        ArrayList<String> elements = new ArrayList<>();
+
+        elements.add("Selecciona model del cotxe");
+        elements.add("E-Tron");
+        elements.add("Kia");
+        elements.add("Pep");
+
+        ArrayAdapter adp = new ArrayAdapter(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, elements);
+
+        spModel.setAdapter(adp);
+        spModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                String element = (String) spModel.getAdapter().getItem(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
 
 
         fAuth = FirebaseAuth.getInstance();
@@ -63,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = tvEmail.getText().toString().trim();
                 String password = tvPassword.getText().toString().trim();
                 String model = spModel.getSelectedItem().toString();
+
 
                 fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

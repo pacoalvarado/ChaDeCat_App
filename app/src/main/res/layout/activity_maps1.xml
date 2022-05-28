@@ -9,55 +9,53 @@
 
     <Button
         android:id="@+id/btn_buscar_min"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="56dp"
         android:layout_gravity="right|top"
-        android:layout_marginTop="625dp"
+        android:layout_marginTop="618dp"
         android:padding="10dp"
         android:paddingRight="10dp"
-        android:text="Punt mes proper" />
+        map:backgroundTint="@color/chadecat"
+        map:icon="@drawable/ic_baseline_share_location_24"
+        map:iconGravity="textTop"
+        map:iconPadding="1dp"
+        map:iconSize="35dp" />
 
     <fragment
         android:id="@+id/mapa"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="674dp"
+        android:layout_height="match_parent"
         tools:context=".MainActivity" />
 
     <Button
         android:id="@+id/btn_msg"
-        android:layout_width="wrap_content"
+        android:layout_width="51dp"
         android:layout_height="wrap_content"
-        android:text="Missatge"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="625dp"
         android:visibility="invisible"
-        android:layout_marginLeft="0dp"/>
+        map:backgroundTint="@color/chadecat"
+        map:icon="@drawable/ic_baseline_message_24" />
 
     <Button
         android:id="@+id/btn_ruta"
-        android:layout_width="wrap_content"
+        android:layout_width="51dp"
         android:layout_height="wrap_content"
-        android:text="Ruta"
-        android:visibility="invisible"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="575dp"
-        android:layout_marginLeft="0dp"/>
+        android:visibility="invisible"
+        map:backgroundTint="@color/chadecat"
+        map:icon="@drawable/ic_baseline_map_24" />
 
     <Button
         android:id="@+id/btn_reservar"
-        android:layout_width="wrap_content"
+        android:layout_width="51dp"
         android:layout_height="wrap_content"
-        android:text="Reserva"
-        android:visibility="invisible"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="525dp"
-        android:layout_marginLeft="0dp"/>
-
-    <Button
-        android:id="@+id/btn_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Close"
         android:visibility="invisible"
-        android:layout_gravity="right"
-        android:layout_marginTop="0dp"/>
+        map:backgroundTint="@color/chadecat"
+        map:icon="@drawable/ic_baseline_book_online_24" />
 
 </FrameLayout>

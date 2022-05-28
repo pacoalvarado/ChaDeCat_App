@@ -161,7 +161,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                                         btn_msg = getActivity().findViewById(R.id.btn_msg);
                                                         btn_ruta = getActivity().findViewById(R.id.btn_ruta);
                                                         btn_reserva = getActivity().findViewById(R.id.btn_reservar);
-                                                        btn_close = getActivity().findViewById(R.id.btn_close);
+
 
 
 
