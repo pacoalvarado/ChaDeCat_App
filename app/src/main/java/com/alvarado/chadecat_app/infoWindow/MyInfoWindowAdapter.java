@@ -32,6 +32,7 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
 
     public MyInfoWindowAdapter(Context context) {
         this.context = context;
+
     }
 
 
@@ -48,18 +49,7 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
         title.setText(marker.getTitle());
         snipp.setText(marker.getSnippet());
 
-        Log.e("**A", "true");
-
-
-        if(a == 0){
-            a = 1;
-            return infoView;
-        }else {
-
-            marker.hideInfoWindow();
-            a = 0;
-            return null;
-        }
+        return infoView;
     }
 
     @Nullable

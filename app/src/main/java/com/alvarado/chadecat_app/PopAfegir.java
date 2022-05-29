@@ -33,7 +33,7 @@ public class PopAfegir extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
     EditText etmsg;
-    String nameF;
+    String nameF, nameMarker;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +42,8 @@ public class PopAfegir extends AppCompatActivity {
 
         btn_afegir_final = findViewById(R.id.btn_add);
         btn_exit = findViewById(R.id.btn_exit);
+
+        nameMarker = getIntent().getExtras().getString("markerTitol");
 
         fUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -56,7 +58,9 @@ public class PopAfegir extends AppCompatActivity {
         btn_exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(PopAfegir.this, Pop.class));
+                Intent i = new Intent(PopAfegir.this, Pop.class);
+                i.putExtra("markerTitol", nameMarker);
+                startActivity(i);
                 finish();
             }
         });
@@ -80,7 +84,7 @@ public class PopAfegir extends AppCompatActivity {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         if (document.get("email").equals(emailF)) {
                                             nameF = document.get("name").toString();
-                                            AddMsg(nameF, misstageF);
+                                            AddMsg(nameF, misstageF, nameMarker);
                                         }
                                     }
                                 } else {
@@ -88,18 +92,21 @@ public class PopAfegir extends AppCompatActivity {
                             }
                         });
 
-                startActivity(new Intent(PopAfegir.this, Pop.class));
+                Intent i = new Intent(PopAfegir.this, Pop.class);
+                i.putExtra("markerTitol", nameMarker);
+                startActivity(i);
                 finish();
             }
         });
 
     }
 
-    public void AddMsg(String name, String msg){
+    public void AddMsg(String name, String msg, String nMarker){
         // Create a new user with a first and last name
         Map<String, Object> missatge = new HashMap<>();
         missatge.put("nom", name);
         missatge.put("missatge", msg);
+        missatge.put("punt", nMarker);
 
 
 // Add a new document with a generated ID

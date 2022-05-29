@@ -140,8 +140,9 @@ public class MainActivity extends AppCompatActivity {
                                     public void onClick(View view) {
                                         SharedPreferences preferences = getSharedPreferences("alvarado.chadecat_app", MODE_PRIVATE);
                                         preferences.edit().clear().commit();
-                                        Intent i = new Intent(MainActivity.this, HomeActivity.class);
+                                        Intent i = new Intent(MainActivity.this, LoginActivity.class);
                                         startActivity(i);
+                                        finish();
                                     }
                                 });
 
@@ -149,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
                                 if (document.get("email").equals(comEmail)) {
                                     String nameFinal = document.get("name").toString();
                                     String emailFinal = document.get("email").toString();
-                                    String modelFinal = document.get("model").toString();
+                                    //String modelFinal = document.get("model").toString();
 
-                                    Log.e("Name", "name" + modelFinal);
+
 
                                     tvname.setText(nameFinal);
                                     tvemail.setText(emailFinal);

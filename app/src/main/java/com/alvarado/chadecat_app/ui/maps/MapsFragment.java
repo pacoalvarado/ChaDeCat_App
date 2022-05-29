@@ -1,9 +1,14 @@
 package com.alvarado.chadecat_app.ui.maps;
 
+import static com.google.android.gms.maps.GoogleMap.*;
+
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,6 +26,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.alvarado.chadecat_app.HomeActivity;
+import com.alvarado.chadecat_app.MainActivity;
 import com.alvarado.chadecat_app.Pop;
 import com.alvarado.chadecat_app.R;
 import com.alvarado.chadecat_app.infoWindow.MyInfoWindowAdapter;
@@ -36,37 +43,41 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firestore.v1.WriteResult;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener {
+public class MapsFragment extends Fragment implements OnMyLocationButtonClickListener,
+        OnMyLocationClickListener, OnInfoWindowCloseListener {
     GoogleMap mMap;
-
+    Dialog mDialog;
     ViewGroup contenidor;
     Location actual;
     private FusedLocationProviderClient fusedLocationClient;
-    LatLng miUbicacion, punt1, punt2, puntF, punt;
-    private Polyline mPolyline;
-    Button btn_min, btn_ruta, btn_msg, btn_reserva, btn_close;
-    Location uFinal, uFinal1, locationF;
+    LatLng miUbicacion, puntF, punt;
+    Button btn_min, btn_ruta, btn_msg, btn_reserva;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-    boolean show;
+    boolean reservatB = false;
     Marker m;
     int a = 0;
-    Fragment map;
+    String nomMarket;
+    String nomReservat;
+    String rnameFinal, rcarrerFinal, rlatitude, rlongitude;
+
 
     @Nullable
     @Override
@@ -75,6 +86,8 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
         this.contenidor = container;
 
         getLocalizacion();
+
+        mDialog = new Dialog(getContext());
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapa);
 
@@ -87,7 +100,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                     return;
                 }
                 mMap.setMyLocationEnabled(true);
-
 
 
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -147,12 +159,12 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                                       String nameFinal = document.get("nom").toString();
-                                                       String carrerFinal = document.get("carrer").toString();
-                                                       String latitude = document.get("latitude").toString();
-                                                       String longitude = document.get("longitude").toString();
-                                                       Boolean reservat = document.getBoolean("reservat");
-                                                       String usuariReservat = document.get("usuariReservat").toString();
+                                                        String nameFinal = document.get("nom").toString();
+                                                        String carrerFinal = document.get("carrer").toString();
+                                                        String latitude = document.get("latitude").toString();
+                                                        String longitude = document.get("longitude").toString();
+                                                        Boolean reservat = document.getBoolean("reservat");
+                                                        String usuariReservat = document.get("usuariReservat").toString();
 
                                                         String emailUserRes = fUser.getEmail();
                                                         Log.d("EMAIL", emailUserRes);
@@ -165,63 +177,182 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
 
 
-                                                       if(usuariReservat.equals(emailUserRes) || !reservat){
+                                                        if(usuariReservat.equals(emailUserRes) || !reservat){
 
-                                                           double latitudeFinal = Double.parseDouble(latitude);
-                                                           double longitudeFinal = Double.parseDouble(longitude);
+                                                            double latitudeFinal = Double.parseDouble(latitude);
+                                                            double longitudeFinal = Double.parseDouble(longitude);
 
-                                                           punt = new LatLng(latitudeFinal, longitudeFinal);
+                                                            punt = new LatLng(latitudeFinal, longitudeFinal);
 
-                                                           location.setLatitude(latitudeFinal);
-                                                           location.setLongitude(longitudeFinal);
-
-
-
-                                                           m = mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal).snippet(carrerFinal));
+                                                            location.setLatitude(latitudeFinal);
+                                                            location.setLongitude(longitudeFinal);
 
 
 
-
-
-                                                          mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                                               @Override
-                                                               public boolean onMarkerClick(@NonNull Marker marker) {
-                                                                   if(a == 0){
-                                                                       a = 1;
-                                                                       mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
-                                                                       btn_ruta.setVisibility(View.VISIBLE);
-                                                                       btn_reserva.setVisibility(View.VISIBLE);
-                                                                       btn_msg.setVisibility(View.VISIBLE);
-                                                                       marker.showInfoWindow();
-                                                                   }else {
-
-                                                                       btn_ruta.setVisibility(View.INVISIBLE);
-                                                                       btn_reserva.setVisibility(View.INVISIBLE);
-                                                                       btn_msg.setVisibility(View.INVISIBLE);
-                                                                       marker.hideInfoWindow();
-                                                                       a = 0;
-                                                                   }
-
-                                                                   return true;
-
-                                                               }
-
-
-                                                           });
+                                                            m = mMap.addMarker(new MarkerOptions().position(punt).title(nameFinal).snippet(carrerFinal));
 
 
 
 
+                                                                    mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+                                                                @Override
+                                                                public boolean onMarkerClick(@NonNull Marker marker) {
+                                                                    if(a == 0){
+                                                                        a = 1;
+                                                                        mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
+                                                                        btn_ruta.setVisibility(View.VISIBLE);
+                                                                        btn_reserva.setVisibility(View.VISIBLE);
+                                                                        btn_msg.setVisibility(View.VISIBLE);
+                                                                        marker.showInfoWindow();
+
+                                                                        nomMarket = marker.getTitle();
+
+                                                                        String titlePunt = marker.getTitle();
+                                                                        db.collection("puntsrecarrega")
+                                                                                .get()
+                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                        if (task.isSuccessful()) {
+                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                if(titlePunt.equals(document.get("nom"))){
+                                                                                                    //rnameFinal, rcarrerFinal, rlatitude, rlongitude
+                                                                                                    rnameFinal = document.get("nom").toString();
+                                                                                                    rcarrerFinal = document.get("carrer").toString();
+                                                                                                    rlatitude = document.get("latitude").toString();
+                                                                                                    rlongitude = document.get("longitude").toString();
+                                                                                                }
+                                                                                            }
+                                                                                        } else {
+                                                                                        }
+                                                                                    }
+                                                                                });
 
 
-                                                           float distance = actual.distanceTo(location) / 1000;
+                                                                        btn_ruta.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View view) {
+                                                                                Intent i = new Intent(Intent.ACTION_VIEW);
 
-                                                           mapDistance.put(distance, punt);
+                                                                                String positionFinal = marker.getPosition().toString();
+                                                                                positionFinal = positionFinal.replace("lat/lng: (", "");
+                                                                                positionFinal = positionFinal.replace(")", "");
+                                                                                positionFinal.trim();
+                                                                                i.setData(Uri.parse("geo:" + positionFinal + "?q=" + positionFinal));
+
+                                                                                startActivity(i);
+                                                                            }
+                                                                        });
+
+                                                                        btn_msg.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View view) {
+
+                                                                                Intent i = new Intent(getActivity(), Pop.class);
+                                                                                i.putExtra("markerTitol", nomMarket);
+                                                                                startActivity(i);
+                                                                            }
+                                                                        });
+
+                                                                        btn_reserva.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View view) {
+
+                                                                                if(!reservatB){
+                                                                                    btn_reserva.setBackgroundColor(Color.parseColor("#f54242"));
+                                                                                    db.collection("puntsrecarrega")
+                                                                                            .get()
+                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                @Override
+                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                    if (task.isSuccessful()) {
+                                                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                            if(nomMarket.equals(document.get("nom"))){
+                                                                                                                db.collection("users")
+                                                                                                                        .get()
+                                                                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                                            @Override
+                                                                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                                                if (task.isSuccessful()) {
+                                                                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                                        if(emailUserRes.equals(document.get("email"))){
+                                                                                                                                            nomReservat = document.get("name").toString();
+
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                } else {
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        });
+                                                                                                                document.getReference().update("reservat", true);
+                                                                                                                document.getReference().update("usuariReservat", nomReservat);
+                                                                                                            }
+
+                                                                                                        }
+                                                                                                    } else {
+                                                                                                    }
+                                                                                                }
+                                                                                            });
+
+                                                                                    reservatB = true;
+                                                                                }else {
+                                                                                    btn_reserva.setBackgroundColor(Color.parseColor("#8BCA61"));
+                                                                                    db.collection("puntsrecarrega")
+                                                                                            .get()
+                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                @Override
+                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                    if (task.isSuccessful()) {
+                                                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                            if(nomMarket.equals(document.get("nom"))){
+                                                                                                                document.getReference().update("reservat", false);
+                                                                                                                document.getReference().update("usuariReservat", "");
+                                                                                                            }
+                                                                                                        }
+                                                                                                    } else {
+                                                                                                    }
+                                                                                                }
+                                                                                            });
+                                                                                    reservatB = false;
+                                                                                }
+
+
+                                                                            }
+                                                                        });
+
+                                                                    }else {
+
+                                                                        btn_ruta.setVisibility(View.INVISIBLE);
+                                                                        btn_reserva.setVisibility(View.INVISIBLE);
+                                                                        btn_msg.setVisibility(View.INVISIBLE);
+                                                                        marker.hideInfoWindow();
+                                                                        a = 0;
+
+
+                                                                    }
+
+
+
+                                                                    return true;
+
+                                                                }
+
+
+                                                            });
 
 
 
 
-                                                       }
+
+
+                                                            float distance = actual.distanceTo(location) / 1000;
+
+                                                            mapDistance.put(distance, punt);
+
+
+
+
+                                                        }
 
                                                     }
                                                 } else {
@@ -238,6 +369,8 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
                                         LatLng latLngMasCercano = mapDistance.get(min);
 
                                         mMap.clear();
+
+                                        mapDistance.get("punt");
 
                                         puntF = new LatLng(latLngMasCercano.latitude, latLngMasCercano.longitude);
 
@@ -288,7 +421,38 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMyLocationButt
 
     }
 
+    @Override
+    public void onInfoWindowClose(@NonNull Marker marker) {
+        Log.e("**ES TANCA", "s");
+    }
 
+    public void AddReserva(String carrer, String latitude, String longitude, String nom, boolean res, String puntRec){
+        // Create a new user with a first and last name
+        Map<String, Object> reserva = new HashMap<>();
+        reserva.put("carrer", carrer);
+        reserva.put("latitude", latitude);
+        reserva.put("longitude", longitude);
+        reserva.put("nom", nom);
+        reserva.put("usuarireservat", puntRec);
+        reserva.put("reservat", res);
+
+
+// Add a new document with a generated ID
+        db.collection("puntsrecarrega")
+                .add(reserva)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        //Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //Log.w(TAG, "Error adding document", e);
+                    }
+                });
+    }
 
 
 

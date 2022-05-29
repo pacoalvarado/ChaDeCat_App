@@ -51,11 +51,9 @@ import java.util.Map;
 public class Pop extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    TextView nmsg, emsg, dmsg, mmsg;
-    EditText etname, etemail, etmsg;
     Button btn_afegir;
     FirebaseUser fUser;
-    String nameF;
+    String nameMarker;
 
     RecyclerView rvMissatge;
     ArrayList<Missatges> msgArrayList;
@@ -68,6 +66,8 @@ public class Pop extends AppCompatActivity {
         setContentView(R.layout.pop);
 
         btn_afegir = findViewById(R.id.brn_afegir_msg);
+
+        nameMarker = getIntent().getExtras().getString("markerTitol");
 
         fUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -93,7 +93,9 @@ public class Pop extends AppCompatActivity {
         btn_afegir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Pop.this, PopAfegir.class));
+                Intent i = new Intent(Pop.this, PopAfegir.class);
+                i.putExtra("markerTitol", nameMarker);
+                startActivity(i);
                 finish();
             }
         });
@@ -106,7 +108,11 @@ public class Pop extends AppCompatActivity {
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 for(DocumentChange dc : value.getDocumentChanges()){
                     if(dc.getType() == DocumentChange.Type.ADDED){
-                        msgArrayList.add(dc.getDocument().toObject(Missatges.class));
+                        if(dc.getDocument().get("punt").equals(nameMarker)){
+                            //Log.e("**Punt1", dc.getDocument().get("punt").toString());
+                            msgArrayList.add(dc.getDocument().toObject(Missatges.class));
+                        }
+
                     }
 
                     myAdapter.notifyDataSetChanged();
@@ -114,4 +120,5 @@ public class Pop extends AppCompatActivity {
             }
         });
     }
+
 }
