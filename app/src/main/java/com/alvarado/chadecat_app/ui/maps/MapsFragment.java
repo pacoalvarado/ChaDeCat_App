@@ -149,7 +149,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                 actual = location;
 
                                 miUbicacion = new LatLng(actual.getLatitude(), actual.getLongitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(miUbicacion, 30));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(miUbicacion, 20));
 
 
                                 db.collection("puntsrecarrega")
@@ -197,7 +197,9 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                                     mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
                                                                 @Override
                                                                 public boolean onMarkerClick(@NonNull Marker marker) {
+
                                                                     if(a == 0){
+                                                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 20));
                                                                         a = 1;
                                                                         mMap.setInfoWindowAdapter(new MyInfoWindowAdapter(contenidor.getContext()));
                                                                         btn_ruta.setVisibility(View.VISIBLE);
