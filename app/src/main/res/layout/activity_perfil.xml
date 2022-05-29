@@ -21,29 +21,6 @@
         tools:ignore="MissingConstraints" />
 
 
-    <ImageView
-        android:id="@+id/imageView15"
-        android:layout_width="491dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="84dp"
-        android:background="#F8F0F0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image3"
-        tools:ignore="MissingConstraints" />
-
-    <ImageView
-        android:id="@+id/imageView16"
-        android:layout_width="491dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="9dp"
-        android:background="#F8F0F0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.487"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView15"
-        tools:ignore="MissingConstraints" />
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
         android:layout_width="177dp"
@@ -94,21 +71,6 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_image"
         tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/tvModel"
-        android:layout_width="240dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="24dp"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/imageView15" />
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/pimage2"
         android:layout_width="70dp"
@@ -120,18 +82,29 @@
         app:layout_constraintTop_toBottomOf="@+id/tvName"
         tools:ignore="MissingConstraints" />
 
+    <ImageView
+        android:id="@+id/imageView15"
+        android:layout_width="491dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="116dp"
+        android:background="#F8F0F0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image3"
+        tools:ignore="MissingConstraints" />
+
     <TextView
         android:id="@+id/tvEmail"
         android:layout_width="400dp"
         android:layout_height="29dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="132dp"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="#000000"
         android:textColorHint="#000000"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.028"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/profile_image3" />
 
@@ -150,26 +123,13 @@
         android:layout_width="64dp"
         android:layout_height="28dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="132dp"
         android:text="Email:"
         android:textAllCaps="false"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_image3" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="167dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:text="Model cotxe:"
-        android:textAllCaps="false"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

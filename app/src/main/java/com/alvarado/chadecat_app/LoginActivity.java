@@ -1,18 +1,16 @@
 package com.alvarado.chadecat_app;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,12 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class LoginActivity extends AppCompatActivity {
     TextView email_log, password_log, tvname, tvemail;
@@ -67,43 +60,68 @@ public class LoginActivity extends AppCompatActivity {
             btnRegister = findViewById(R.id.button_register);
             rbSesion = findViewById(R.id.RBSesion);
 
+
+
+
             fAuth = FirebaseAuth.getInstance();
             fStore = FirebaseFirestore.getInstance();
 
 
             isActivateRadioButton = rbSesion.isChecked();
 
-            btnLogin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String email = email_log.getText().toString().trim();
-                    String password = password_log.getText().toString().trim();
 
-                    fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            saveStateButton();
-                            if (task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Done Login", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                intent.putExtra("email", email);
+                btnLogin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String email = email_log.getText().toString().trim();
+                        String password = password_log.getText().toString().trim();
 
-                                startActivity(intent);
-                                finish();
-
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_LONG).show();
-                            }
+                        if(email.length() == 0){
+                            email_log.setError("This field can not be blank");
                         }
-                    });
+                        if(password.length() == 0){
+                            password_log.setError("This field can not be blank");
+                        }
+                        if(email.length() != 0 && password.length() != 0){
+                            fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    saveStateButton();
+                                    if (task.isSuccessful()) {
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        intent.putExtra("email", email);
 
-                }
-            });
+                                        startActivity(intent);
+                                        finish();
+
+                                    } else {
+                                        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(LoginActivity.this);
+                                        dlgAlert.setMessage("wrong password or email");
+                                        dlgAlert.setTitle("Error Message...");
+                                        dlgAlert.setPositiveButton("OK", null);
+                                        dlgAlert.setCancelable(true);
+                                        dlgAlert.create().show();
+                                        dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which){
+
+                                                    }
+                                        });
+
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+
+                });
+
+
 
             btnRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
                     startActivity(intent);
                 }
             });
@@ -118,7 +136,15 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+
+
     }
+
+
+
+
+
+
 
     public void saveStateButton(){
         SharedPreferences sharedPreferences = getSharedPreferences(STRING_PREFERENCES, MODE_PRIVATE);
