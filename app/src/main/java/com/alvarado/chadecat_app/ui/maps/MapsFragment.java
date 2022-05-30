@@ -92,7 +92,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-    boolean reservatB = false, puntR = false;
+    boolean reservatB = false, puntR = false, draw = false;
     Marker m;
     Polyline mPolyline;
     int a = 0;
@@ -383,6 +383,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                     @Override
                                     public void onClick(View view) {
                                         if(!puntR){
+                                            draw = true;
                                             btn_min.setBackgroundColor(Color.parseColor("#f54242"));
                                             float min = Collections.min(mapDistance.keySet());
 
@@ -397,7 +398,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                             puntF = new LatLng(latLngMasCercano.latitude, latLngMasCercano.longitude);
 
 
-                                            //drawRoute();
+                                            drawRoute();
 
 
 
@@ -418,6 +419,8 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                     });
                                             puntR = true;
                                         }else {
+                                            draw = false;
+                                            drawRoute();
                                             btn_min.setBackgroundColor(Color.parseColor("#8BCA61"));
                                             db.collection("puntsrecarrega")
                                                     .get()
@@ -682,10 +685,16 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                     points.add(position);
                 }
 
-                // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
-                lineOptions.width(8);
-                lineOptions.color(Color.RED);
+                if(draw){
+                    // Adding all the points in the route to LineOptions
+                    lineOptions.addAll(points);
+                    lineOptions.width(8);
+                    lineOptions.color(Color.RED);
+                }else{
+                    lineOptions.visible(false);
+                }
+
+
             }
 
             // Drawing polyline in the Google Map for the i-th route
