@@ -87,7 +87,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
     ViewGroup contenidor;
     Location actual, miUbi;
     private FusedLocationProviderClient fusedLocationClient;
-    LatLng miUbicacion, puntF, punt, puntA;
+    LatLng miUbicacion = new LatLng(41.7219, 1.8182), puntF, punt, puntA;
     Button btn_min, btn_ruta, btn_msg, btn_reserva;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
