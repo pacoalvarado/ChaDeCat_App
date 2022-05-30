@@ -10,16 +10,19 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.alvarado.chadecat_app.DirectionJSONParser;
 import com.alvarado.chadecat_app.HomeActivity;
 import com.alvarado.chadecat_app.MainActivity;
 import com.alvarado.chadecat_app.Pop;
@@ -44,6 +48,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -56,28 +61,44 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firestore.v1.WriteResult;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class MapsFragment extends Fragment implements OnMyLocationButtonClickListener,
         OnMyLocationClickListener, OnInfoWindowCloseListener {
+
+
+    LocationManager locationManager = null;
+    LocationListener locationListener = null;
     GoogleMap mMap;
     Dialog mDialog;
     ViewGroup contenidor;
-    Location actual;
+    Location actual, miUbi;
     private FusedLocationProviderClient fusedLocationClient;
-    LatLng miUbicacion, puntF, punt;
+    LatLng miUbicacion, puntF, punt, puntA;
     Button btn_min, btn_ruta, btn_msg, btn_reserva;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
     FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
-    boolean reservatB = false;
+    boolean reservatB = false, puntR = false;
     Marker m;
+    Polyline mPolyline;
     int a = 0;
     String nomMarket;
-    String nomReservat;
+    double puntFLatitude, la, lo;
+    String nomReservat, puntFLat;
     String rnameFinal, rcarrerFinal, rlatitude, rlongitude;
 
 
@@ -103,23 +124,27 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                 }
                 mMap.setMyLocationEnabled(true);
 
+                LatLng camera = new LatLng(41.723516, 1.819230);
 
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(camera, 17));
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                mMap.getUiSettings().setZoomControlsEnabled(true);
 
-                LocationManager locationManager = (LocationManager) container.getContext().getSystemService(Context.LOCATION_SERVICE);
-                LocationListener locationListener = new LocationListener() {
+                locationManager = (LocationManager) container.getContext().getSystemService(Context.LOCATION_SERVICE);
+                Log.e("***********", "On Map Ready");
+                locationListener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
                         miUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(miUbicacion).title("ubicacion actual"));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(miUbicacion));
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                        //mMap.addMarker(new MarkerOptions().position(miUbicacion).title("ubicacion actual"));
+
+                        /*CameraPosition cameraPosition = new CameraPosition.Builder()
                                 .target(miUbicacion)
                                 .zoom(14)
                                 .bearing(90)
                                 .tilt(45)
                                 .build();
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
                         Log.e("CameraZoom", "Zoom");
                     }
 
@@ -140,7 +165,12 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
 
                 };
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+                Criteria criteri = new Criteria();
+                criteri.setCostAllowed(false);
+                criteri.setAltitudeRequired(false);
+                criteri.setAccuracy(Criteria.ACCURACY_FINE);
+                locationManager.requestLocationUpdates(locationManager.getBestProvider(criteri, false), 0, 0, locationListener);
 
 
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(container.getContext());
@@ -150,8 +180,6 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                             public void onSuccess(Location location) {
                                 actual = location;
 
-                                miUbicacion = new LatLng(actual.getLatitude(), actual.getLongitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(miUbicacion, 20));
 
 
                                 db.collection("puntsrecarrega")
@@ -169,14 +197,10 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                         String usuariReservat = document.get("usuariReservat").toString();
 
                                                         String emailUserRes = fUser.getEmail();
-                                                        Log.d("EMAIL", emailUserRes);
-                                                        Log.d("EMAILR", usuariReservat);
 
                                                         btn_msg = getActivity().findViewById(R.id.btn_msg);
                                                         btn_ruta = getActivity().findViewById(R.id.btn_ruta);
                                                         btn_reserva = getActivity().findViewById(R.id.btn_reservar);
-
-
 
 
                                                         if(usuariReservat.equals(emailUserRes) || !reservat){
@@ -186,6 +210,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
                                                             punt = new LatLng(latitudeFinal, longitudeFinal);
 
+                                                            miUbi = new Location(location);
                                                             location.setLatitude(latitudeFinal);
                                                             location.setLongitude(longitudeFinal);
 
@@ -272,24 +297,8 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                                                                     if (task.isSuccessful()) {
                                                                                                         for (QueryDocumentSnapshot document : task.getResult()) {
                                                                                                             if(nomMarket.equals(document.get("nom"))){
-                                                                                                                db.collection("users")
-                                                                                                                        .get()
-                                                                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                                            @Override
-                                                                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                                                if (task.isSuccessful()) {
-                                                                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                                                                        if(emailUserRes.equals(document.get("email"))){
-                                                                                                                                            nomReservat = document.get("name").toString();
-
-                                                                                                                                        }
-                                                                                                                                    }
-                                                                                                                                } else {
-                                                                                                                                }
-                                                                                                                            }
-                                                                                                                        });
                                                                                                                 document.getReference().update("reservat", true);
-                                                                                                                document.getReference().update("usuariReservat", nomReservat);
+                                                                                                                document.getReference().update("usuariReservat", emailUserRes);
                                                                                                             }
 
                                                                                                         }
@@ -301,22 +310,22 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                                                     reservatB = true;
                                                                                 }else {
                                                                                     btn_reserva.setBackgroundColor(Color.parseColor("#8BCA61"));
-                                                                                    db.collection("puntsrecarrega")
-                                                                                            .get()
-                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                @Override
-                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                    if (task.isSuccessful()) {
-                                                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                                            if(nomMarket.equals(document.get("nom"))){
-                                                                                                                document.getReference().update("reservat", false);
-                                                                                                                document.getReference().update("usuariReservat", "");
+                                                                                        db.collection("puntsrecarrega")
+                                                                                                .get()
+                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                        if (task.isSuccessful()) {
+                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                if(nomMarket.equals(document.get("nom"))){
+                                                                                                                    document.getReference().update("reservat", false);
+                                                                                                                    document.getReference().update("usuariReservat", "");
+                                                                                                                }
                                                                                                             }
+                                                                                                        } else {
                                                                                                         }
-                                                                                                    } else {
                                                                                                     }
-                                                                                                }
-                                                                                            });
+                                                                                                });
                                                                                     reservatB = false;
                                                                                 }
 
@@ -344,14 +353,18 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
                                                             });
 
+                                                            Location referencia = new Location(location);
+                                                            Log.e("**", String.valueOf(miUbicacion));
+                                                            Log.e("**", String.valueOf(referencia));
 
-
-
-
-
-                                                            float distance = actual.distanceTo(location) / 1000;
+                                                            referencia.setLatitude(miUbicacion.latitude);
+                                                            referencia.setLongitude(miUbicacion.longitude);
+                                                            float distance = referencia.distanceTo(location) / 1000;
 
                                                             mapDistance.put(distance, punt);
+
+
+
 
 
 
@@ -369,19 +382,70 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                 btn_min.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        float min = Collections.min(mapDistance.keySet());
+                                        if(!puntR){
+                                            btn_min.setBackgroundColor(Color.parseColor("#f54242"));
+                                            float min = Collections.min(mapDistance.keySet());
 
-                                        LatLng latLngMasCercano = mapDistance.get(min);
+                                            LatLng latLngMasCercano = mapDistance.get(min);
 
-                                        mMap.clear();
+                                            mMap.clear();
 
-                                        mapDistance.get("punt");
+                                            puntFLatitude = latLngMasCercano.latitude;
 
-                                        puntF = new LatLng(latLngMasCercano.latitude, latLngMasCercano.longitude);
+                                            puntFLat = String.valueOf(puntFLatitude);
 
-                                        mMap.addMarker(new MarkerOptions().position(puntF).title("PuntFinal"));
+                                            puntF = new LatLng(latLngMasCercano.latitude, latLngMasCercano.longitude);
 
-                                        //drawRoute();
+
+                                            //drawRoute();
+
+
+
+                                            db.collection("puntsrecarrega")
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                    if(puntFLat.equals(document.get("latitude").toString())){
+                                                                        mMap.addMarker(new MarkerOptions().position(puntF).title(document.get("nom").toString()).snippet(document.get("carrer").toString()));
+                                                                    }
+                                                                }
+                                                            } else {
+                                                            }
+                                                        }
+                                                    });
+                                            puntR = true;
+                                        }else {
+                                            btn_min.setBackgroundColor(Color.parseColor("#8BCA61"));
+                                            db.collection("puntsrecarrega")
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                                                    String la = document.get("latitude").toString();
+                                                                    String lo = document.get("longitude").toString();
+                                                                    double lad = Double.parseDouble(la);
+                                                                    double lod = Double.parseDouble(lo);
+                                                                    puntA = new LatLng(lad, lod);
+
+
+                                                                        mMap.addMarker(new MarkerOptions().position(puntA).title(document.get("nom").toString()).snippet(document.get("carrer").toString()));
+
+                                                                }
+                                                            } else {
+                                                            }
+                                                        }
+                                                    });
+
+                                            puntR = false;
+                                        }
+
+
 
 
 
@@ -463,7 +527,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
 
 
-/*
+
     private void drawRoute(){
 
         // Getting URL to the Google Directions API
@@ -634,7 +698,11 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
             }else
                 Toast.makeText(getActivity(),"No route is found", Toast.LENGTH_LONG).show();
         }
-    }*/
+    }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        locationManager.removeUpdates(locationListener);
+    }
 }

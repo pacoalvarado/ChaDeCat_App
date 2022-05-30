@@ -12,7 +12,7 @@
         android:layout_width="45dp"
         android:layout_height="56dp"
         android:layout_gravity="right|top"
-        android:layout_marginTop="618dp"
+        android:layout_marginTop="525dp"
         android:padding="10dp"
         android:paddingRight="10dp"
         map:backgroundTint="@color/chadecat"
@@ -25,7 +25,7 @@
         android:id="@+id/mapa"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="701dp"
         tools:context=".MainActivity" />
 
     <Button

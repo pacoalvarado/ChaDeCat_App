@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         comEmail = user;
 
