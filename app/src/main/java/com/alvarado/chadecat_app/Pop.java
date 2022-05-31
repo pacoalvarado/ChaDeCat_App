@@ -79,13 +79,27 @@ public class Pop extends AppCompatActivity {
 
         getWindow().setLayout((int) (width*.8), (int)(height*.8));
 
+        // Obtenció de les referències als components de GUI.
         rvMissatge = findViewById(R.id.rvMissatges);
+
+        // Posar aquesta propietat a true incrementa el rendiment del RecyclerView
+        // si sabem que la seva mida no canviarà malgrat que hi pugui haver canvis
+        // en les dades que mostra.
         rvMissatge.setHasFixedSize(true);
+
+        // Si volem llista, activem el new LinearLayout...(); si volem grid, activem
+        // el new GridLayout...(), indicant el nombre de columnes.
         rvMissatge.setLayoutManager(new LinearLayoutManager(this));
 
+        // Creem el model de dades que mostrarem al RecyclerView. Executem una consulta sobre
+        // la base de dades i guardem els resultats en un ArrayList.
         msgArrayList = new ArrayList<Missatges>();
+
+        // Creem l'Adapter que associarem al RecyclerView a partir de l'ArrayList amb
+        // les dades.
         myAdapter = new MissatgeAdapterFirestore(Pop.this, msgArrayList);
 
+        // Associem l'Adapter al RecyclerView.
         rvMissatge.setAdapter(myAdapter);
 
         EventChangeListener();
@@ -109,7 +123,6 @@ public class Pop extends AppCompatActivity {
                 for(DocumentChange dc : value.getDocumentChanges()){
                     if(dc.getType() == DocumentChange.Type.ADDED){
                         if(dc.getDocument().get("punt").equals(nameMarker)){
-                            //Log.e("**Punt1", dc.getDocument().get("punt").toString());
                             msgArrayList.add(dc.getDocument().toObject(Missatges.class));
                         }
 

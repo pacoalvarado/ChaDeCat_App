@@ -20,11 +20,15 @@ public class MissatgeAdapterFirestore extends RecyclerView.Adapter<MissatgeAdapt
     Context ctx;
     ArrayList<Missatges> msgArrayList;
 
+    // Constructor que inicialitza l'Adapter del RecyclerView. Li passarem l'ArrayList
+    // que conté les dades dels elements.
     public MissatgeAdapterFirestore(Context ctx, ArrayList<Missatges> msgArrayList) {
         this.ctx = ctx;
         this.msgArrayList = msgArrayList;
     }
 
+    // Crea les noves vistes dels elements del RecyclerView. Aquest mètode
+    // és cridat pel LayoutManager.
     @NonNull
     @Override
     public MissatgeAdapterFirestore.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,6 +38,8 @@ public class MissatgeAdapterFirestore extends RecyclerView.Adapter<MissatgeAdapt
         return new MyViewHolder(v);
     }
 
+    // Mètode que dóna contingut a les vistes dels elements del RecyclerView. Aquest
+    // mètode el crida el LayoutManager.
     @Override
     public void onBindViewHolder(@NonNull MissatgeAdapterFirestore.MyViewHolder holder, int position) {
 
@@ -44,6 +50,9 @@ public class MissatgeAdapterFirestore extends RecyclerView.Adapter<MissatgeAdapt
 
     }
 
+
+    // Mètode que retorna el nombre d'elements del DataSet que mostrem a la llista.
+    // Aquest mètode el crida el LayoutManager.
     @Override
     public int getItemCount() {
         return msgArrayList.size();

@@ -57,15 +57,13 @@ public class MainActivity extends AppCompatActivity {
     String comEmail;
     View v_logout, v_perfil;
 
-    private DatabaseReference mDatabase;
-
     FirebaseUser fUser;
 
-    FusedLocationProviderClient fusedLocationProviderClient;
-    Fragment mapsFragment;
 
-
-
+    /**
+     * Metode que es crida al crear l'activity
+     * @param savedInstanceState Si l'activitat s'està reinicialitzant després d'haver-se tancat prèviament, aquest paquet conté les dades que ha subministrat més recentment a onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +110,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * Aquest mètode es crida sempre que l'usuari decideix navegar cap amunt dins de la jerarquia d'activitats de l'aplicació des de la barra d'accions.
+     * @return retorna un boolean, true si la navegació amunt s'ha completat correctament i aquesta activitat s'ha acabat, false en cas contrari.
+     */
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_perfil2);
@@ -120,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+
+    /**
+     * Metode quer ens retoprna el nom d'usuari amb el que em iniciat sessio dins de l'aplicació.
+     */
     public void ReadUser() {
         db.collection("users")
                 .get()
@@ -136,6 +141,10 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 v_logout.setOnClickListener(new View.OnClickListener() {
+                                    /**
+                                     * Al fer click en el Logout, ens neteja tot el SharedPreference i ens porta a l'activitat de Login.
+                                     * @param view la view que has clicat
+                                     */
                                     @Override
                                     public void onClick(View view) {
                                         SharedPreferences preferences = getSharedPreferences("alvarado.chadecat_app", MODE_PRIVATE);

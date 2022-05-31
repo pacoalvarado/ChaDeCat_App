@@ -55,6 +55,8 @@ public class PopAfegir extends AppCompatActivity {
 
         getWindow().setLayout((int) (width*.8), (int)(height*.8));
 
+
+        //Boto per tornar a tots els missatges
         btn_exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,6 +67,7 @@ public class PopAfegir extends AppCompatActivity {
             }
         });
 
+        //Al clicar el boto ens conectem i afegim els misstges a la base de dade que tenim associada a Firebase (missatges)
         btn_afegir_final.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -101,6 +104,7 @@ public class PopAfegir extends AppCompatActivity {
 
     }
 
+    //Metode per crear un Map per afegir tota la info del missatges
     public void AddMsg(String name, String msg, String nMarker){
         // Create a new user with a first and last name
         Map<String, Object> missatge = new HashMap<>();
@@ -109,7 +113,7 @@ public class PopAfegir extends AppCompatActivity {
         missatge.put("punt", nMarker);
 
 
-// Add a new document with a generated ID
+        // Afegim el nou misstge a la collectiuon de missatges de Firebase
         db.collection("missatges")
                 .add(missatge)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

@@ -15,6 +15,9 @@ public class InitialActivity extends AppCompatActivity {
         setContentView(R.layout.activity_layout);
 
         new Handler().postDelayed(new Runnable() {
+            /**
+             * Metode que ens canvia d'activiti al cap de 2 segons de ser iniciada.
+             */
             @Override
             public void run() {
                 Intent intent = new Intent(InitialActivity.this, LoginActivity.class);

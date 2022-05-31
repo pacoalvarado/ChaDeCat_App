@@ -24,10 +24,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
-    TextView email_log, password_log, tvname, tvemail;
+    TextView email_log, password_log;
     Button btnLogin, btnRegister;
     RadioButton rbSesion;
-    String userId;
+
 
     private static final String STRING_PREFERENCES = "alvarado.chadecat_app";
     private static final String BUTTON_PREFERENCES = "state.button.sesion";
@@ -37,8 +37,11 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth fAuth;
     FirebaseUser fUser;
     FirebaseFirestore fStore;
-    private DatabaseReference mDatabase;
 
+    /**
+     * Al crear la vista, cridem el metode que primer ens comprova si tenim algu iniciat en la sessió (amb el sharedprefernce), si estem login entrem directa, si no haurem de fer el Login
+     * @param savedInstanceState Si l'activitat s'està reinicialitzant després d'haver-se tancat prèviament, aquest paquet conté les dades que ha subministrat més recentment a onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,12 +79,15 @@ public class LoginActivity extends AppCompatActivity {
                         String email = email_log.getText().toString().trim();
                         String password = password_log.getText().toString().trim();
 
+                        //Comprovem si el email esta buit.
                         if(email.length() == 0){
                             email_log.setError("This field can not be blank");
                         }
+                        //Comprovem la contrassenya.
                         if(password.length() == 0){
                             password_log.setError("This field can not be blank");
                         }
+
                         if(email.length() != 0 && password.length() != 0){
                             fAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -117,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
 
-
+            //Anem a l'activity de Registre
             btnRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -126,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+            //Seleccionem el Logout
             rbSesion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -136,16 +143,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-
-
     }
 
 
-
-
-
-
-
+    //Guardem l'estat del boto, i guardem l'informacio dins del SharedPreference
     public void saveStateButton(){
         SharedPreferences sharedPreferences = getSharedPreferences(STRING_PREFERENCES, MODE_PRIVATE);
         sharedPreferences.edit().putBoolean(BUTTON_PREFERENCES, rbSesion.isChecked()).apply();

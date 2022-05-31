@@ -6,10 +6,8 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -31,8 +29,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.alvarado.chadecat_app.DirectionJSONParser;
-import com.alvarado.chadecat_app.HomeActivity;
-import com.alvarado.chadecat_app.MainActivity;
 import com.alvarado.chadecat_app.Pop;
 import com.alvarado.chadecat_app.R;
 import com.alvarado.chadecat_app.infoWindow.MyInfoWindowAdapter;
@@ -42,8 +38,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -59,7 +53,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firestore.v1.WriteResult;
 
 import org.json.JSONObject;
 
@@ -77,7 +70,7 @@ import java.util.Map;
 
 
 public class MapsFragment extends Fragment implements OnMyLocationButtonClickListener,
-        OnMyLocationClickListener, OnInfoWindowCloseListener {
+        OnMyLocationClickListener {
 
 
     LocationManager locationManager = null;
@@ -87,7 +80,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
     ViewGroup contenidor;
     Location actual, miUbi;
     private FusedLocationProviderClient fusedLocationClient;
-    LatLng miUbicacion = new LatLng(41.7219, 1.8182), puntF, punt, puntA;
+    LatLng mLocation = new LatLng(41.7219, 1.8182), puntF, punt, puntA;
     Button btn_min, btn_ruta, btn_msg, btn_reserva;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Map<Float, LatLng> mapDistance = new HashMap<>();
@@ -101,7 +94,13 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
     String nomReservat, puntFLat;
     String rnameFinal, rcarrerFinal, rlatitude, rlongitude;
 
-
+    /**
+     * Metode que és crida al crear el fragment
+     * @param inflater es pot utilitzar per inflar qualsevol vista del fragment
+     * @param container  aquesta és la vista principal a la qual s'ha d'adjuntar la interfície d'usuari del fragment aquesta és la vista principal a la qual s'ha d'adjuntar la interfície d'usuari del fragment
+     * @param savedInstanceState  aquest fragment s'està reconstruint a partir d'un estat desat anterior
+     * @return retorna la vista del fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -115,6 +114,10 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapa);
 
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+            /**
+             * Metode el qual es crida en el moment en que el mapa ja està llest.
+             * @param googleMap instància de GoogleMap associat amb el MapFragment o MapView que defineix la devolució de trucada.
+             */
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
 
@@ -131,21 +134,14 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                 mMap.getUiSettings().setZoomControlsEnabled(true);
 
                 locationManager = (LocationManager) container.getContext().getSystemService(Context.LOCATION_SERVICE);
-                Log.e("***********", "On Map Ready");
                 locationListener = new LocationListener() {
+                    /**
+                     * Cridem aquest metode cada cop que la nostre localitzacio canvia. I guardem la nova posicio en la variable de mLocation
+                     * @param location és la nova localitzacio
+                     */
                     @Override
                     public void onLocationChanged(Location location) {
-                        miUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
-                        //mMap.addMarker(new MarkerOptions().position(miUbicacion).title("ubicacion actual"));
-
-                        /*CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(miUbicacion)
-                                .zoom(14)
-                                .bearing(90)
-                                .tilt(45)
-                                .build();
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
-                        Log.e("CameraZoom", "Zoom");
+                        mLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     }
 
                     @Override
@@ -165,7 +161,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
 
                 };
-
+                //Fem servir la clase de Criteria, on indica els criteris d'aplicacio per seleccionar un proveidor d'ubicacio. En aquest cas, no agafem ni costos ni la altitud.
                 Criteria criteri = new Criteria();
                 criteri.setCostAllowed(false);
                 criteri.setAltitudeRequired(false);
@@ -176,12 +172,16 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                 fusedLocationClient = LocationServices.getFusedLocationProviderClient(container.getContext());
                 fusedLocationClient.getLastLocation()
                         .addOnSuccessListener(new OnSuccessListener<Location>() {
+                            /**
+                             * Un cop creat el mapa és crida el metode.
+                             * @param location és la nostre localitzacio
+                             */
                             @Override
                             public void onSuccess(Location location) {
                                 actual = location;
 
 
-
+                                //Fem la cerca dels diferents punts que tenim dins de la nostre base de dades, de Firebase.
                                 db.collection("puntsrecarrega")
                                         .get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -220,7 +220,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
 
 
-
+                                                                //Un cop cliquem al marquet que necessitem, per primer cop s'obrira tota la informació, i si o fem per segon cop és tancara.
                                                                     mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
                                                                 @Override
                                                                 public boolean onMarkerClick(@NonNull Marker marker) {
@@ -257,7 +257,8 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                                                     }
                                                                                 });
 
-
+                                                                        //Tenim diferents botons que s'activen i es desactiven.
+                                                                        //El btn_ruta, ens obra l'aplicacio de GoogleMaps, amb la localització d'aqurll punt.
                                                                         btn_ruta.setOnClickListener(new View.OnClickListener() {
                                                                             @Override
                                                                             public void onClick(View view) {
@@ -273,6 +274,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                                             }
                                                                         });
 
+                                                                        //Btn_msg, aquets boto ens obra els diferents misstages que tenim en aquell, punt (Cada ount té missatges diferents)
                                                                         btn_msg.setOnClickListener(new View.OnClickListener() {
                                                                             @Override
                                                                             public void onClick(View view) {
@@ -283,6 +285,9 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                                             }
                                                                         });
 
+                                                                        //btn_reserva, té la funció de reservar aquets punt per al usuari que està registrat, aixó vol dir, que si un altre usuari
+                                                                        //fa un login al buscar els diferents punts no trobara el punt que està reservat per l'altre usuari.
+                                                                        //Al reservar canvia a la base de dades el nom del usuari i el boolean de reservat.
                                                                         btn_reserva.setOnClickListener(new View.OnClickListener() {
                                                                             @Override
                                                                             public void onClick(View view) {
@@ -333,7 +338,9 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                                                             }
                                                                         });
 
-                                                                    }else {
+                                                                    }
+                                                                    //Al tornar a clicar damunt del punt ens tancara els botons i la finestra d'informacio.
+                                                                    else {
 
                                                                         btn_ruta.setVisibility(View.INVISIBLE);
                                                                         btn_reserva.setVisibility(View.INVISIBLE);
@@ -353,22 +360,17 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
                                                             });
 
+                                                            //Creem una nova Location, i ens serveix per guardar la nostra Ubicacio.
                                                             Location referencia = new Location(location);
-                                                            Log.e("**", String.valueOf(miUbicacion));
-                                                            Log.e("**", String.valueOf(referencia));
 
-                                                            referencia.setLatitude(miUbicacion.latitude);
-                                                            referencia.setLongitude(miUbicacion.longitude);
+                                                            referencia.setLatitude(mLocation.latitude);
+                                                            referencia.setLongitude(mLocation.longitude);
+
+                                                            //Calculem la distancia que hi ha entre la nostre ubicacio, i els diferents punts que tenim en el mapa.
+                                                            //I guardem aquetsa distancia en un Map, amb el seu punt de referencia i com a key.
                                                             float distance = referencia.distanceTo(location) / 1000;
 
                                                             mapDistance.put(distance, punt);
-
-
-
-
-
-
-
                                                         }
 
                                                     }
@@ -377,7 +379,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                             }
                                         });
 
-
+                                //Boto que serveix per calcular el punt més proper de la nostra ubicacio a un dels punts que tenim habilitats. I ens dibuixa el recorregut que haurem de fer.
                                 btn_min = getActivity().findViewById(R.id.btn_buscar_min);
                                 btn_min.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -387,17 +389,18 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                             btn_min.setBackgroundColor(Color.parseColor("#f54242"));
                                             float min = Collections.min(mapDistance.keySet());
 
-                                            LatLng latLngMasCercano = mapDistance.get(min);
+                                            LatLng latLngMin = mapDistance.get(min);
 
                                             mMap.clear();
 
-                                            puntFLatitude = latLngMasCercano.latitude;
+                                            puntFLatitude = latLngMin.latitude;
 
                                             puntFLat = String.valueOf(puntFLatitude);
 
-                                            puntF = new LatLng(latLngMasCercano.latitude, latLngMasCercano.longitude);
+                                            puntF = new LatLng(latLngMin.latitude, latLngMin.longitude);
 
 
+                                            //Cridem el metode per dibuixar la ruta.
                                             drawRoute();
 
 
@@ -448,33 +451,22 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                                             puntR = false;
                                         }
 
-
-
-
-
                                     }
                                 });
-
-
-
-
 
                             }
                         });
 
-
-
-
             }
         });
-
-
 
         return  view;
     }
 
 
-
+    /**
+     * Metode que ens comprova si tenim els permissos habilitats a l'hora d'iniciar per primer cop.
+     */
     private void getLocalizacion() {
         int permiso = ContextCompat.checkSelfPermission(contenidor.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
         if(permiso == PackageManager.PERMISSION_DENIED){
@@ -495,10 +487,6 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
     }
 
-    @Override
-    public void onInfoWindowClose(@NonNull Marker marker) {
-        Log.e("**ES TANCA", "s");
-    }
 
     public void AddReserva(String carrer, String latitude, String longitude, String nom, boolean res, String puntRec){
         // Create a new user with a first and last name
@@ -517,13 +505,11 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        //Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //Log.w(TAG, "Error adding document", e);
                     }
                 });
     }
@@ -533,34 +519,34 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
     private void drawRoute(){
 
-        // Getting URL to the Google Directions API
-        String url = getDirectionsUrl(miUbicacion, puntF);
+        // Obtenció de l'URL a l'API de Google Directions
+        String url = getDirectionsUrl(mLocation, puntF);
 
         DownloadTask downloadTask = new DownloadTask();
 
-        // Start downloading json data from Google Directions API
+        // Comenceu a baixar dades json de l'API de Google Directions
         downloadTask.execute(url);
     }
 
 
     private String getDirectionsUrl(LatLng origin,LatLng dest){
 
-        // Origin of route
+        // Origen de la ruta
         String str_origin = "origin="+origin.latitude+","+origin.longitude;
 
-        // Destination of route
+        // Destinació de la ruta
         String str_dest = "destination="+dest.latitude+","+dest.longitude;
 
         // Key
         String key = "key=" + getString(R.string.google_maps_key);
 
-        // Building the parameters to the web service
+        // Construcció dels paràmetres del servei web
         String parameters = str_origin+"&"+str_dest+"&"+key;
 
-        // Output format
+        // Format de sortida
         String output = "json";
 
-        // Building the url to the web service
+        // Creació de l'URL del servei web
         String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
         Log.e("URL", url);
         return url;
@@ -574,13 +560,13 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
         try{
             URL url = new URL(strUrl);
 
-            // Creating an http connection to communicate with url
+            // S'està creant una connexió http per comunicar-se amb l'url
             urlConnection = (HttpURLConnection) url.openConnection();
 
-            // Connecting to url
+            // S'està connectant a l'URL
             urlConnection.connect();
 
-            // Reading data from url
+            // Llegint dades de l'URL
             iStream = urlConnection.getInputStream();
 
             BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
@@ -608,15 +594,15 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
     private class DownloadTask extends AsyncTask<String, Void, String> {
 
-        // Downloading data in non-ui thread
+        // S'estan baixant dades en un fil que no és ui
         @Override
         protected String doInBackground(String... url) {
 
-            // For storing data from web service
+            // Per emmagatzemar dades del servei web
             String data = "";
 
             try{
-                // Fetching the data from web service
+                // Obtenció de dades del servei web
                 data = downloadUrl(url[0]);
                 Log.d("DownloadTask","DownloadTask : " + data);
             }catch(Exception e){
@@ -625,15 +611,14 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
             return data;
         }
 
-        // Executes in UI thread, after the execution of
-        // doInBackground()
+        // S'executa al fil de la interfície d'usuari, després de l'execució de
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
             ParserTask parserTask = new ParserTask();
 
-            // Invokes the thread for parsing the JSON data
+            // Invoca el fil per analitzar les dades JSON
             parserTask.execute(result);
         }
     }
@@ -641,7 +626,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
 
-        // Parsing the data in non-ui thread
+        // Analitzant les dades en un fil no ui
         @Override
         protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
 
@@ -652,7 +637,7 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                 jObject = new JSONObject(jsonData[0]);
                 DirectionJSONParser parser = new DirectionJSONParser();
 
-                // Starts parsing data
+                // Comença a analitzar les dades
                 routes = parser.parse(jObject);
             }catch(Exception e){
                 e.printStackTrace();
@@ -660,21 +645,21 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
             return routes;
         }
 
-        // Executes in UI thread, after the parsing process
+        // S'executa al fil de la interfície d'usuari, després del procés d'anàlisi
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
 
-            // Traversing through all the routes
+            // Recorrent totes les rutes
             for(int i=0;i<result.size();i++){
                 points = new ArrayList<LatLng>();
                 lineOptions = new PolylineOptions();
 
-                // Fetching i-th route
+                // Recollint la i-a ruta
                 List<HashMap<String, String>> path = result.get(i);
 
-                // Fetching all the points in i-th route
+                // Recollint tots els punts de la ruta i-è
                 for(int j=0;j<path.size();j++){
                     HashMap<String,String> point = path.get(j);
 
@@ -686,18 +671,20 @@ public class MapsFragment extends Fragment implements OnMyLocationButtonClickLis
                 }
 
                 if(draw){
-                    // Adding all the points in the route to LineOptions
+                    // Afegint tots els punts de la ruta a LineOptions
                     lineOptions.addAll(points);
                     lineOptions.width(8);
                     lineOptions.color(Color.RED);
-                }else{
+                }
+                //Si cliquem per segon cop ens eliminara la ruta.
+                else{
                     lineOptions.visible(false);
                 }
 
 
             }
 
-            // Drawing polyline in the Google Map for the i-th route
+            // Dibuix de polilínia al mapa de Google per a la ruta i-è
             if(lineOptions != null) {
                 if(mPolyline != null){
                     mPolyline.remove();

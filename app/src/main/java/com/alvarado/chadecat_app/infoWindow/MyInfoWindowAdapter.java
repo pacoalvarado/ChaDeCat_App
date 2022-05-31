@@ -1,26 +1,15 @@
 package com.alvarado.chadecat_app.infoWindow;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.location.Location;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-import com.alvarado.chadecat_app.HomeActivity;
-import com.alvarado.chadecat_app.LoginActivity;
 import com.alvarado.chadecat_app.R;
-import com.alvarado.chadecat_app.RegisterActivity;
-import com.alvarado.chadecat_app.ui.maps.MapsFragment;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
@@ -36,8 +25,11 @@ public class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter, GoogleM
     }
 
 
-
-
+    /**
+     * Metode que es crida quan el demanem des de el MapsFragment (quan cliquem en un market)
+     * @param marker passa el market el qual em clicat
+     * @return retorna la vista amb l'informacio d'aquell market.
+     */
     @Nullable
     @Override
     public View getInfoWindow(@NonNull Marker marker) {

@@ -26,7 +26,6 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
     TextView tvName, tvEmail, tvPassword;
-    Spinner spModel;
     Button btnRegister, btnExit;
     FirebaseAuth fAuth;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -50,8 +49,8 @@ public class RegisterActivity extends AppCompatActivity {
                 String name = tvName.getText().toString().trim();
                 String email = tvEmail.getText().toString().trim();
                 String password = tvPassword.getText().toString().trim();
-                //String model = spModel.getSelectedItem().toString();
 
+                //Fem un seguit de comprovacions per poder registranos amb els parametres pertinets de Fairebase (com un email, i una contrasenya de minim 6 digits)
                 if(name.length() == 0){
                     tvName.setError("This field can not be blank");
                 }
@@ -66,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
                     tvPassword.setError("The password must contain at least 6 characters");
                 }
 
+                //Despres de fer les comprovacions afegim les dades del registre a Firebase
                 if(email.length() != 0 && password.length() != 0 && name.length() != 0){
                     fAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -98,6 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        //Boto per tornar a Login
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,9 +114,8 @@ public class RegisterActivity extends AppCompatActivity {
         Map<String, Object> user = new HashMap<>();
         user.put("name", name);
         user.put("email", email);
-       // user.put("model", model);
 
-// Add a new document with a generated ID
+
         db.collection("users")
                 .add(user)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
